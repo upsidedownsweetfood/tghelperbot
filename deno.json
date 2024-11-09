@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@mtkruto/mtkruto": "https://deno.land/x/mtkruto/mod.ts",
+    "@std/assert": "jsr:@std/assert@1",
+    "@std/encoding": "jsr:@std/encoding@1.0.5",
+    "@std/fs": "jsr:@std/fs@^1.0.5"
+  }
+}
