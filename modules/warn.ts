@@ -8,7 +8,6 @@ async function warnUser(
 	bot: Client,
 	ctx: WithFilter<Context, "message:text">,
 ) {
-	log(LogTypes.INFO, "Warning user");
 }
 
 export const warnUserHandler: CommandHandler = {

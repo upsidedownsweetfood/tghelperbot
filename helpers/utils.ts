@@ -28,8 +28,3 @@ export function retrieveBotCredentials(): BotCredentials {
 		apiHash: Deno.env.get("BOT_API_HASH"),
 	};
 }
-
-export function isUserAdmin(userId: number): bool {
-	// TODO
-	return false;
-}

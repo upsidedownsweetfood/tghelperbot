@@ -1,18 +1,10 @@
 import { Client, StorageLocalStorage } from "@mtkruto/mtkruto";
 
 import { log, LogTypes } from "./helpers/log.ts";
-import {
-	parseCommaSeparatedArray,
-	retrieveBotCredentials,
-} from "./helpers/utils.ts";
+import { retrieveBotCredentials } from "./helpers/utils.ts";
 import { videoDownloadHandler } from "./modules/videoDownload.ts";
 import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
-import { sha1 } from "https://deno.land/x/mtkruto@0.6.0/1_utilities.ts";
-
-const allowed_groups: string[] = parseCommaSeparatedArray(
-	Deno.env.get("GROUPS") ?? "",
-);
 
 const botCreds = retrieveBotCredentials();
 
@@ -30,13 +22,13 @@ if (import.meta.main) {
 		botCreds.apiID == null
 	) throw "undefined bot credentials";
 
-	log(LogTypes.INFO, `ALLOWED GROUPS: ${allowed_groups.toString()}`);
-
 	const bot = new Client({
 		storage: new StorageLocalStorage("bot"),
 		apiId: botCreds.apiID,
 		apiHash: botCreds.apiHash,
 	});
+
+	log(LogTypes.INFO, "Starting bot");
 
 	for (const handler of commandHandlers) {
 		log(
