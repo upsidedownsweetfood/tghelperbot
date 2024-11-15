@@ -1,6 +1,7 @@
 import { encodeBase64 } from "@std/encoding/base64";
+import { BotCredentials } from "../types/misc.ts";
 
-export function parse_array_from_string(array: string) {
+export function parseCommaSeparatedArray(array: string) {
 	return array.split(",");
 }
 
@@ -18,4 +19,17 @@ export function makeUrlPlayNiceWithCachePlz(path: string) {
 		"/",
 		"-",
 	);
+}
+
+export function retrieveBotCredentials(): BotCredentials {
+	return {
+		apiID: Number(Deno.env.get("BOT_API_ID")),
+		apiKey: Deno.env.get("BOT_API_TOKEN"),
+		apiHash: Deno.env.get("BOT_API_HASH"),
+	};
+}
+
+export function isUserAdmin(userId: number): bool {
+	// TODO
+	return false;
 }
