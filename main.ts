@@ -1,7 +1,10 @@
 import { Client, StorageLocalStorage } from "@mtkruto/mtkruto";
 
 import { log, LogTypes } from "./helpers/log.ts";
-import { retrieveBotCredentials } from "./helpers/utils.ts";
+import {
+	checkUserPermissions,
+	retrieveBotCredentials,
+} from "./helpers/utils.ts";
 import { videoDownloadHandler } from "./modules/videoDownload.ts";
 import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
@@ -38,7 +41,16 @@ if (import.meta.main) {
 			`Registering on command handler: ${handler.name}`,
 		);
 		bot.command(handler.name, async (ctx) => {
-			await handler.callback(bot, ctx, db);
+			if (
+				checkUserPermissions(
+					ctx.message.from!.id,
+					ctx.chat.id,
+					handler.name,
+				)
+			) await handler.callback(bot, ctx, db);
+			else {await ctx.reply(
+					"Member doesn't have enough permissions",
+				);}
 		});
 	}
 

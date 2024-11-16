@@ -39,5 +39,6 @@ cat migration_name | sqlite3 db_path
     I'm also against using a lot of external libraries.
 
 ---
+
 This bot does not have a user agreement, or anything, but i'd personally like if this was not used in trans or LGBT hate groups.
 Thanks.
