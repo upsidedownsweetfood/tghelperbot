@@ -8,8 +8,8 @@ import {
 
 import { downloadFromURL } from "../helpers/yt-dlp.ts";
 import { log, LogTypes } from "../helpers/log.ts";
-import { CommandHandler, MessageHandler } from "../types/misc.ts";
-import { Command } from "https://raw.githubusercontent.com/MTKruto/socks5/main/client.ts";
+import { MessageHandler } from "../types/misc.ts";
+import { Database } from "@db/sqlite";
 
 const downloadedFilePath: string = Deno.env.get(
 	"TEMP_DOWNLOAD_PATH",
@@ -21,6 +21,7 @@ const allowed_platforms: string[] = parseCommaSeparatedArray(
 async function VideoDownload(
 	bot: Client,
 	ctx: WithFilter<Context, "message:text">,
+	_db: Database,
 ) {
 	if (!URL.canParse(ctx.message.text)) return;
 

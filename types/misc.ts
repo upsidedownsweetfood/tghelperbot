@@ -1,5 +1,6 @@
 import { Client, Context } from "@mtkruto/mtkruto";
 import { WithFilter } from "https://deno.land/x/mtkruto@0.6.0/client/0_filters.ts";
+import { Database } from "@db/sqlite";
 
 export type BotCredentials = {
 	apiKey: string | undefined;
@@ -9,7 +10,11 @@ export type BotCredentials = {
 
 export type CommandHandler = {
 	name: string;
-	callback: (bot: Client, ctx: any) => Promise<void>;
+	callback: (
+		bot: Client,
+		ctx: WithFilter<Context, "message:text">,
+		db: Database,
+	) => Promise<void>;
 };
 
 export type MessageHandler = {
@@ -17,5 +22,6 @@ export type MessageHandler = {
 	callback: (
 		bot: Client,
 		ctx: WithFilter<Context, "message:text">,
+		db: Database,
 	) => Promise<void>;
 };

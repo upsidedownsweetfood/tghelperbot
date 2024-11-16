@@ -5,9 +5,10 @@ import { retrieveBotCredentials } from "./helpers/utils.ts";
 import { videoDownloadHandler } from "./modules/videoDownload.ts";
 import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
+import { Database } from "@db/sqlite";
 
 const botCreds = retrieveBotCredentials();
-
+const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
 const messageHandlers: MessageHandler[] = [
 	videoDownloadHandler,
 ];
@@ -28,7 +29,8 @@ if (import.meta.main) {
 		apiHash: botCreds.apiHash,
 	});
 
-	log(LogTypes.INFO, "Starting bot");
+	const db = new Database(dbPath);
+	log(LogTypes.INFO, `Initialized DB at path ${dbPath}`);
 
 	for (const handler of commandHandlers) {
 		log(
@@ -36,7 +38,7 @@ if (import.meta.main) {
 			`Registering on command handler: ${handler.name}`,
 		);
 		bot.command(handler.name, async (ctx) => {
-			await handler.callback(bot, ctx);
+			await handler.callback(bot, ctx, db);
 		});
 	}
 
@@ -46,10 +48,11 @@ if (import.meta.main) {
 			`Registering on message handler: ${handler.name}`,
 		);
 		bot.on("message:text", async (ctx) => {
-			await handler.callback(bot, ctx);
+			await handler.callback(bot, ctx, db);
 		});
 	}
 
+	log(LogTypes.INFO, "Starting bot");
 	await bot.start({ botToken: botCreds.apiKey });
 	log(LogTypes.INFO, "Bot started");
 }
