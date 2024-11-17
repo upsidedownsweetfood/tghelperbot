@@ -1,14 +1,10 @@
 import { Client, StorageLocalStorage } from "@mtkruto/mtkruto";
+import { Database } from "@db/sqlite";
 
 import { log, LogTypes } from "./helpers/log.ts";
-import {
-	checkUserPermissions,
-	retrieveBotCredentials,
-} from "./helpers/utils.ts";
-import { videoDownloadHandler } from "./modules/videoDownload.ts";
+import { retrieveBotCredentials } from "./helpers/utils.ts";
 import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
-import { Database } from "@db/sqlite";
 import {
 	registerCommandHandler,
 	registerMessageHandler,
@@ -16,11 +12,10 @@ import {
 } from "./helpers/telegram.ts";
 
 const botCreds = retrieveBotCredentials();
-const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
-const messageHandlers: MessageHandler[] = [
-	videoDownloadHandler,
-];
 
+const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
+
+const messageHandlers: MessageHandler[] = [];
 const commandHandlers: CommandHandler[] = [
 	warnUserHandler,
 ];

@@ -28,12 +28,3 @@ export function retrieveBotCredentials(): BotCredentials {
 		apiHash: Deno.env.get("BOT_API_HASH"),
 	};
 }
-
-export function checkUserPermissions(
-	userId: number,
-	chatId: number,
-	commandName: string,
-): boolean {
-	// TODO
-	return true;
-}

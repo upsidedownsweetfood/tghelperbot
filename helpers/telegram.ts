@@ -1,6 +1,6 @@
 import { Client } from "@mtkruto/mtkruto";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
-import { checkUserPermissions } from "./utils.ts";
+import { checkUserPermissions } from "./database.ts";
 import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
 

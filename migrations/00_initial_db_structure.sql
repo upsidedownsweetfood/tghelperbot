@@ -1,15 +1,11 @@
 CREATE TABLE IF NOT EXISTS Chats (
-	ChatId int NOT NULL UNIQUE,
+	ChatId int PRIMARY KEY NOT NULL UNIQUE,
 	Enabled boolean NOT NULL,
-	Allowed boolean NOT NULL,
-	
-	PRIMARY KEY (ChatId)
+	Allowed boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Users (
-	UserId int NOT NULL,
-	
-	PRIMARY KEY (UserId)
+	UserId int PRIMARY KEY NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Roles (
@@ -37,4 +33,24 @@ CREATE TABLE IF NOT EXISTS UserWarns (
 	
 	FOREIGN KEY (User) REFERENCES Users(UserId),
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId)
+);
+
+CREATE TABLE IF NOT EXISTS Administrators (
+	User int NOT NULL,
+	FOREIGN KEY (User) REFERENCES Users(UserId)
+);
+
+CREATE TABLE IF NOT EXISTS Modules (
+	Id INTEGER PRIMARY KEY,
+	Name varchar(255) NOT NULL UNIQUE,
+	Enabled boolean NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS ModulePermissions (
+	Chat int NOT NULL,
+	Module int NOT NULL,
+	Roles text,
+	
+	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
+	FOREIGN KEY (Module) REFERENCES Modules(ROWID)
 )
