@@ -9,6 +9,11 @@ import { videoDownloadHandler } from "./modules/videoDownload.ts";
 import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
 import { Database } from "@db/sqlite";
+import {
+	registerCommandHandler,
+	registerMessageHandler,
+	registerStartHandler,
+} from "./helpers/telegram.ts";
 
 const botCreds = retrieveBotCredentials();
 const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
@@ -35,36 +40,25 @@ if (import.meta.main) {
 	const db = new Database(dbPath);
 	log(LogTypes.INFO, `Initialized DB at path ${dbPath}`);
 
+	log(LogTypes.INFO, "Registering start command handler");
+	registerStartHandler(bot, db);
+
 	for (const handler of commandHandlers) {
 		log(
 			LogTypes.INFO,
-			`Registering on command handler: ${handler.name}`,
+			`Registering command handler: ${handler.name}`,
 		);
-		bot.command(handler.name, async (ctx) => {
-			if (
-				checkUserPermissions(
-					ctx.message.from!.id,
-					ctx.chat.id,
-					handler.name,
-				)
-			) await handler.callback(bot, ctx, db);
-			else {await ctx.reply(
-					"Member doesn't have enough permissions",
-				);}
-		});
+		registerCommandHandler(bot, handler, db);
 	}
 
 	for (const handler of messageHandlers) {
 		log(
 			LogTypes.INFO,
-			`Registering on message handler: ${handler.name}`,
+			`Registering message handler: ${handler.name}`,
 		);
-		bot.on("message:text", async (ctx) => {
-			await handler.callback(bot, ctx, db);
-		});
+		registerMessageHandler(bot, handler, db);
 	}
 
-	log(LogTypes.INFO, "Starting bot");
 	await bot.start({ botToken: botCreds.apiKey });
 	log(LogTypes.INFO, "Bot started");
 }

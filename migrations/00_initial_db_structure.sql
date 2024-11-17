@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS Chats (
 	ChatId int NOT NULL UNIQUE,
-	Enabled BOOLEAN NOT NULL,
+	Enabled boolean NOT NULL,
+	Allowed boolean NOT NULL,
 	
 	PRIMARY KEY (ChatId)
 );
