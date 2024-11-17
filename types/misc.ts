@@ -15,6 +15,7 @@ export type CommandHandler = {
 		ctx: WithFilter<Context, "message:text">,
 		db: Database,
 	) => Promise<void>;
+	botAdminOnly: boolean;
 };
 
 export type MessageHandler = {

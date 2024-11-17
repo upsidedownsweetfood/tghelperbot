@@ -14,6 +14,9 @@ You'll also need to set a few environment variables that are needed for the bot.
 There are also a few reccomended ones.
 - DATABASE_PATH
 
+After that is done, you should probably run the migrations, the instructions on how to do that are available further below in the README.
+Then, you should add yourself, or another telegram user to the Administrators and Users table in the database.
+
 ## Migrations
 I didn't plan for the bot to have automatically generated migrations, if you make any change to the db structure, you will have to make and run a SQL script.
 

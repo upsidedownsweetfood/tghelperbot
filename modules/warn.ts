@@ -1,9 +1,8 @@
 import { Client, Context } from "@mtkruto/mtkruto";
 import { WithFilter } from "https://deno.land/x/mtkruto@0.6.0/client/0_filters.ts";
-import { log, LogTypes } from "../helpers/log.ts";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
-import { UserRepo } from "../types/tables/User.ts";
+import { UserRepo } from "../types/tables/Users.ts";
 
 // Todo
 async function warnUser(
@@ -21,22 +20,19 @@ async function warnUser(
 	}
 	const userId = ctx.message.replyToMessage!.from!.id;
 	const userName = ctx.message.replyToMessage?.from?.username;
-	const user = userRepo.getUser(userId);
+	userRepo.addUser(userId);
+	const user = userRepo.getUser(userId)!;
 
-	if (user == null) {
-		await ctx.reply("Unknown error, cannot warn user");
-		return;
-	}
-
+	userRepo.addUserWarn(user, ctx.message.chat.id, "");
 	const userWarnsCount = userRepo.getUserWarnCounts(
 		user,
 		ctx.message.chat.id,
 	);
-
 	await ctx.reply(`Warning user ${userName}, ${userWarnsCount} out of 3`);
 }
 
 export const warnUserHandler: CommandHandler = {
 	name: "warn",
 	callback: warnUser,
+	botAdminOnly: false,
 };

@@ -3,18 +3,24 @@ import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
 import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
+import { ChatRepo } from "../types/tables/Chats.ts";
+import { ModuleRepo } from "../types/tables/Modules.ts";
 
 export function registerCommandHandler(
 	bot: Client,
 	handler: CommandHandler,
 	db: Database,
 ) {
+	const repo = new ModuleRepo(db);
+	repo.addModule(handler.name, handler.botAdminOnly);
+
 	bot.command(handler.name, async (ctx) => {
 		if (
 			!checkUserPermissions(
 				ctx.message.from!.id,
 				ctx.chat.id,
 				handler.name,
+				db,
 			)
 		) {
 			await ctx.reply(
@@ -48,10 +54,24 @@ export function registerStartHandler(
 	db: Database,
 ) {
 	bot.command("start", async (ctx) => {
-		if (!isChatAllowed(ctx.chat.id, db)) {
+		if (
+			!isChatAllowed(ctx.chat.id, db) &&
+			!checkUserPermissions(
+				ctx.message?.from?.id!,
+				ctx.chat.id,
+				"INTERNAL_STARTCOMMAND_DONT_ADD_TO_DB",
+				db,
+			)
+		) {
 			await ctx.reply(
 				"Please contact an administrator to allow the bot to work here. Then run the command again",
 			);
-		} else await ctx.reply("blep:");
+			return;
+		}
+		const repo = new ChatRepo(db);
+		repo.AllowChat(ctx.chat.id);
+		repo.EnableChat(ctx.chat.id);
+
+		await ctx.reply("Enabled Chat");
 	});
 }

@@ -30,20 +30,22 @@ CREATE TABLE IF NOT EXISTS UserWarns (
 	Chat int NOT NULL,
 	Motivation text,
 	Date datetime NOT NULL,
+	Valid boolean NOT NULL,
 	
 	FOREIGN KEY (User) REFERENCES Users(UserId),
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS Administrators (
-	User int NOT NULL,
+	User int NOT NULL UNIQUE,
 	FOREIGN KEY (User) REFERENCES Users(UserId)
 );
 
 CREATE TABLE IF NOT EXISTS Modules (
 	Id INTEGER PRIMARY KEY,
 	Name varchar(255) NOT NULL UNIQUE,
-	Enabled boolean NOT NULL
+	Enabled boolean NOT NULL,
+	AdministratorOnly boolean NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS ModulePermissions (
