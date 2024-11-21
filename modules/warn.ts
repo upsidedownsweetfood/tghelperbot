@@ -40,26 +40,30 @@ async function warnUser(
 		chatId,
 	);
 
-	await ctx.reply(
-		`Warning user ${userToBeWarnedName}, ${userWarnsCount} out of 3`,
-	);
+	if (userWarnsCount <= 3) {
+		await ctx.reply(
+			`Warning user ${userToBeWarnedName}, ${userWarnsCount} out of 3`,
+		);
+		return;
+	}
 
-	if (userWarnsCount >= 3) {
-		try {
-			await bot.setChatMemberRights(
-				chatId,
-				userToBeWarnedId,
-				{
-					rights: {
-						canSendMessages: false,
-					},
+	try {
+		await bot.setChatMemberRights(
+			chatId,
+			userToBeWarnedId,
+			{
+				rights: {
+					canSendMessages: false,
 				},
-			);
-		} catch {
-			await ctx.reply(
-				`Error has occured with warning ${userToBeWarnedName}, reverting the warn`,
-			);
-		}
+			},
+		);
+		await ctx.reply(
+			`${userToBeWarnedName} has been warned too many times, muting them.`,
+		);
+	} catch {
+		await ctx.reply(
+			`Error has occured with warning ${userToBeWarnedName}, reverting the warn`,
+		);
 	}
 }
 

@@ -23,7 +23,7 @@ async function toggleMuteUser(
 
 	if (!ctx.message.replyToMessageId) {
 		await ctx.reply(
-			"You need to reply to a user's message to warn them",
+			"You need to reply to a user's message to mute them",
 		);
 		return;
 	}
@@ -34,6 +34,8 @@ async function toggleMuteUser(
 				canSendMessages: false,
 			},
 		});
+
+		await ctx.reply(`Muted User ${userToBeMutedName}`);
 	} catch {
 		await ctx.reply(
 			`Error has occured with muting ${userToBeMutedName}`,

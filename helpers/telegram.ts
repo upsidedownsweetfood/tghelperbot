@@ -25,7 +25,6 @@ export function registerCommandHandler(
 ) {
 	const repo = new ModuleRepo(db);
 	repo.addModule(handler.name, handler.botAdminOnly);
-
 	bot.command(handler.name, async (ctx) => {
 		if (
 			!checkUserPermissions(
