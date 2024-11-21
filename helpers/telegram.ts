@@ -61,6 +61,21 @@ export function registerMessageHandler(
 	});
 }
 
+export function registerErrorHandler(
+	bot: Client,
+) {
+	bot.use(async (ctx, next) => {
+		try {
+			await next(); // call the next handlers
+		} catch (err) {
+			console.error("Failed to handle an update:");
+			console.trace(err);
+			await ctx.reply(
+				"An unknown error has occured, check the logs",
+			);
+		}
+	});
+}
 export function registerStartHandler(
 	bot: Client,
 	db: Database,

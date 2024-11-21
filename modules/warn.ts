@@ -5,7 +5,6 @@ import { Database } from "@db/sqlite";
 import { UserRepo } from "../types/tables/Users.ts";
 import { getUserAdminRights } from "../helpers/telegram.ts";
 
-// Todo
 async function warnUser(
 	bot: Client,
 	ctx: WithFilter<Context, "message:text">,
@@ -13,8 +12,11 @@ async function warnUser(
 ) {
 	const userRepo = new UserRepo(db);
 
-	const userId = ctx.message.replyToMessage!.from!.id;
-	const userToBeMuted = await ctx.getChatMember(userId);
+	const userToBeWarnedId = ctx.message.replyToMessage!.from!.id;
+	const userToBeWarned = await ctx.getChatMember(userToBeWarnedId);
+	const userToBeWarnedName = userToBeWarned.user.username ??
+		`${userToBeWarned.user.firstName} ${userToBeWarned.user.lastName}`;
+
 	const chatId = ctx.message.chat.id;
 
 	if (await getUserAdminRights(bot, chatId) == undefined) {
@@ -29,8 +31,8 @@ async function warnUser(
 		return;
 	}
 
-	userRepo.addUser(userId);
-	const user = userRepo.getUser(userId)!;
+	userRepo.addUser(userToBeWarnedId);
+	const user = userRepo.getUser(userToBeWarnedId)!;
 
 	userRepo.addUserWarn(user, chatId, "");
 	const userWarnsCount = userRepo.getUserWarnCounts(
@@ -39,19 +41,25 @@ async function warnUser(
 	);
 
 	await ctx.reply(
-		`Warning user ${
-			userToBeMuted.user.username ??
-				`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`
-		}, ${userWarnsCount} out of 3`,
+		`Warning user ${userToBeWarnedName}, ${userWarnsCount} out of 3`,
 	);
 
 	if (userWarnsCount >= 3) {
-		await bot.setChatMemberRights(chatId, userId, {
-			rights: {
-				canSendMessages: false,
-			},
-		});
-		console.log(userToBeMuted);
+		try {
+			await bot.setChatMemberRights(
+				chatId,
+				userToBeWarnedId,
+				{
+					rights: {
+						canSendMessages: false,
+					},
+				},
+			);
+		} catch {
+			await ctx.reply(
+				`Error has occured with warning ${userToBeWarnedName}, reverting the warn`,
+			);
+		}
 	}
 }
 

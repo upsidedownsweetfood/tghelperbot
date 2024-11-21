@@ -7,10 +7,12 @@ import { warnUserHandler } from "./modules/warn.ts";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
 import {
 	registerCommandHandler,
+	registerErrorHandler,
 	registerMessageHandler,
 	registerStartHandler,
 } from "./helpers/telegram.ts";
 import { botSettingsHandler } from "./modules/botSettings.ts";
+import { toggleMuteUserHandler } from "./modules/mute.ts";
 
 const botCreds = retrieveBotCredentials();
 
@@ -19,6 +21,7 @@ const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
 const messageHandlers: MessageHandler[] = [];
 const commandHandlers: CommandHandler[] = [
 	warnUserHandler,
+	toggleMuteUserHandler,
 	botSettingsHandler,
 ];
 
@@ -36,6 +39,9 @@ if (import.meta.main) {
 
 	const db = new Database(dbPath);
 	log(LogTypes.INFO, `Initialized DB at path ${dbPath}`);
+
+	log(LogTypes.INFO, "Registering error log handler");
+	registerErrorHandler(bot);
 
 	log(LogTypes.INFO, "Registering start command handler");
 	registerStartHandler(bot, db);
