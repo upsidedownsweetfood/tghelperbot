@@ -1,10 +1,22 @@
-import { Client } from "@mtkruto/mtkruto";
+import { ChatMember, Client } from "@mtkruto/mtkruto";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
 import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
 import { ChatRepo } from "../types/tables/Chats.ts";
 import { ModuleRepo } from "../types/tables/Modules.ts";
+import { UserRepo } from "../types/tables/Users.ts";
+
+export async function getUserAdminRights(
+	bot: Client,
+	chatId: number,
+): Promise<ChatMember | undefined> {
+	const user = await bot.getMe();
+	const admins = await bot.getChatAdministrators(chatId);
+	const userRole = admins.find((member) => member.user.id == user.id);
+
+	return userRole;
+}
 
 export function registerCommandHandler(
 	bot: Client,
@@ -54,6 +66,7 @@ export function registerStartHandler(
 	db: Database,
 ) {
 	bot.command("start", async (ctx) => {
+		new UserRepo(db).addUser(ctx.message.from!.id);
 		if (
 			!isChatAllowed(ctx.chat.id, db) &&
 			!checkUserPermissions(

@@ -54,5 +54,14 @@ CREATE TABLE IF NOT EXISTS ModulePermissions (
 	Roles text,
 	
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
-	FOREIGN KEY (Module) REFERENCES Modules(ROWID)
+	FOREIGN KEY (Module) REFERENCES Modules(Id)
+);
+
+CREATE TABLE IF NOT EXISTS ModuleSettings (
+	Chat int NOT NULL,
+	Module int NOT NULL,
+	Settings text NOT NULL,
+	
+	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
+	FOREIGN KEY (Module) REFERENCES Modules(Id)
 )
