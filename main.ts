@@ -15,7 +15,7 @@ import {
 
 import { botSettingsHandler } from "./commands/botSettings.ts";
 import { warnUserHandler } from "./commands/warn.ts";
-import { muteUserHandler } from "./commands/mute.ts";
+import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 
 const botCreds = retrieveBotCredentials();
 const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
@@ -24,6 +24,7 @@ const messageHandlers: MessageHandler[] = [];
 const commandHandlers: CommandHandler[] = [
 	warnUserHandler,
 	muteUserHandler,
+	unmuteUserHandler,
 	botSettingsHandler,
 ];
 

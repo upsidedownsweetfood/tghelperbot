@@ -4,18 +4,13 @@ import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
 import { getUserAdminRights } from "../helpers/telegram.ts";
 
-async function muteUser(
+async function setMuteStatus(
 	bot: Client,
 	ctx: WithFilter<Context, "message:text">,
-	_db: Database,
+	userId: number,
+	chatId: number,
+	muted: boolean,
 ) {
-	const userToBeMutedId = ctx.message.replyToMessage!.from!.id;
-	const userToBeMuted = await ctx.getChatMember(userToBeMutedId);
-	const userToBeMutedName = userToBeMuted.user.username ??
-		`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
-
-	const chatId = ctx.message.chat.id;
-
 	if (await getUserAdminRights(bot, chatId) == undefined) {
 		await ctx.reply("Bot does not have enough permissions");
 		return;
@@ -29,22 +24,65 @@ async function muteUser(
 	}
 
 	try {
-		await bot.setChatMemberRights(chatId, userToBeMutedId, {
+		await bot.setChatMemberRights(chatId, userId, {
 			rights: {
-				canSendMessages: false,
+				canSendMessages: muted,
 			},
 		});
-
-		await ctx.reply(`Muted User ${userToBeMutedName}`);
+		return true;
 	} catch {
-		await ctx.reply(
-			`Error has occured with muting ${userToBeMutedName}`,
-		);
+		return false;
 	}
+}
+
+async function muteUser(
+	bot: Client,
+	ctx: WithFilter<Context, "message:text">,
+	_db: Database,
+) {
+	const userId = ctx.message.replyToMessage!.from!.id;
+	const userToBeMuted = await ctx.getChatMember(userId);
+	const chatId = ctx.message.chat.id;
+
+	const success = await setMuteStatus(bot, ctx, userId, chatId, true);
+
+	const userToBeMutedName = userToBeMuted.user.username ??
+		`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
+
+	if (success) await ctx.reply(`Muted User ${userToBeMutedName}`);
+	else {await ctx.reply(
+			`Error has occured with muting ${userToBeMutedName}`,
+		);}
+}
+
+async function unmuteUser(
+	bot: Client,
+	ctx: WithFilter<Context, "message:text">,
+	_db: Database,
+) {
+	const userId = ctx.message.replyToMessage!.from!.id;
+	const userToBeMuted = await ctx.getChatMember(userId);
+	const chatId = ctx.message.chat.id;
+
+	const success = await setMuteStatus(bot, ctx, userId, chatId, false);
+
+	const userToBeMutedName = userToBeMuted.user.username ??
+		`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
+
+	if (success) await ctx.reply(`unmuted User ${userToBeMutedName}`);
+	else {await ctx.reply(
+			`Error has occured with unmuting ${userToBeMutedName}`,
+		);}
 }
 
 export const muteUserHandler: CommandHandler = {
 	name: "mute",
 	callback: muteUser,
+	botAdminOnly: false,
+};
+
+export const unmuteUserHandler: CommandHandler = {
+	name: "unmute",
+	callback: unmuteUser,
 	botAdminOnly: false,
 };
