@@ -56,6 +56,6 @@ if (import.meta.main) {
 		registerMessageHandler(bot, handler, db);
 	}
 
-	await bot.start();
 	log(LogTypes.INFO, "Bot started");
+	await bot.start();
 }
