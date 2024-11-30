@@ -1,4 +1,5 @@
-import { ChatMember, Client } from "@mtkruto/mtkruto";
+import { Bot, Context } from "grammy";
+import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
 import { Database } from "@db/sqlite";
@@ -6,29 +7,31 @@ import { isChatAllowed, isChatEnabled } from "./database.ts";
 import { ChatRepo } from "../types/tables/Chats.ts";
 import { CommandRepo } from "../types/tables/Commands.ts";
 import { User, UserRepo } from "../types/tables/Users.ts";
+import { log } from "./log.ts";
+import { LogTypes } from "./log.ts";
 
 export async function getUserAdminRights(
-	bot: Client,
+	bot: Bot,
 	chatId: number,
 ): Promise<ChatMember | undefined> {
-	const user = await bot.getMe();
-	const admins = await bot.getChatAdministrators(chatId);
+	const user = await bot.api.getMe();
+	const admins = await bot.api.getChatAdministrators(chatId);
 	const userRole = admins.find((member) => member.user.id == user.id);
 
 	return userRole;
 }
 
 export function registerCommandHandler(
-	bot: Client,
+	bot: Bot,
 	handler: CommandHandler,
 	db: Database,
 ) {
 	const repo = new CommandRepo(db);
 	repo.addModule(handler.name, handler.botAdminOnly);
 
-	bot.command(handler.name, async (ctx) => {
+	bot.command(handler.name, async (ctx: Context) => {
 		const userRepo = new UserRepo(db);
-		const userId = ctx.message.from!.id;
+		const userId = ctx.message!.from!.id;
 
 		userRepo.addUser(userId);
 		const user: User = userRepo.getUser(userId)!;
@@ -36,7 +39,7 @@ export function registerCommandHandler(
 		if (
 			!checkUserPermissions(
 				user,
-				ctx.chat.id,
+				ctx.chat!.id,
 				handler.name,
 				db,
 			)
@@ -46,7 +49,7 @@ export function registerCommandHandler(
 			);
 			return;
 		}
-		if (!isChatEnabled(ctx.chat.id, db)) {
+		if (!isChatEnabled(ctx.chat!.id, db)) {
 			await ctx.reply(
 				"Chat is not enabled, please run the start command",
 			);
@@ -58,48 +61,41 @@ export function registerCommandHandler(
 }
 
 export function registerMessageHandler(
-	bot: Client,
+	bot: Bot,
 	handler: MessageHandler,
 	db: Database,
 ) {
-	bot.on("message:text", async (ctx) => {
+	bot.on("message", async (ctx: Context) => {
 		await handler.callback(bot, ctx, db);
 	});
 }
 
 export function registerErrorHandler(
-	bot: Client,
+	bot: Bot,
 ) {
-	bot.use(async (ctx, next) => {
-		try {
-			await next(); // call the next handlers
-		} catch (err) {
-			console.error("Failed to handle an update:");
-			console.trace(err);
-			await ctx.reply(
-				"An unknown error has occured, check the logs",
-			);
-		}
+	bot.catch(async (ctx) => {
+		log(LogTypes.ERROR, String(ctx.error));
+		await ctx.ctx.reply("Unknown error");
 	});
 }
 export function registerStartHandler(
-	bot: Client,
+	bot: Bot,
 	db: Database,
 ) {
-	bot.command("start", async (ctx) => {
+	bot.command("start", async (ctx: Context) => {
 		const userRepo = new UserRepo(db);
 		const chatRepo = new ChatRepo(db);
 
-		const userId = ctx.message.from!.id;
+		const userId = ctx.message!.from!.id;
 		userRepo.addUser(userId);
 
 		const user: User = userRepo.getUser(userId)!;
 
 		if (
-			!isChatAllowed(ctx.chat.id, db) &&
+			!isChatAllowed(ctx.chat!.id, db) &&
 			!checkUserPermissions(
 				user,
-				ctx.chat.id,
+				ctx.chat!.id,
 				"INTERNAL_STARTCOMMAND_DONT_ADD_TO_DB",
 				db,
 			)
@@ -110,8 +106,8 @@ export function registerStartHandler(
 			return;
 		}
 
-		chatRepo.AllowChat(ctx.chat.id);
-		chatRepo.EnableChat(ctx.chat.id);
+		chatRepo.AllowChat(ctx.chat!.id);
+		chatRepo.EnableChat(ctx.chat!.id);
 
 		await ctx.reply("Enabled Chat");
 	});

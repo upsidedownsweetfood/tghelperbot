@@ -1,6 +1,5 @@
-import { Client, Context } from "@mtkruto/mtkruto";
-import { WithFilter } from "https://deno.land/x/mtkruto@0.6.0/client/0_filters.ts";
 import { Database } from "@db/sqlite";
+import { Bot, Context } from "grammy";
 
 export type BotCredentials = {
 	apiKey: string | undefined;
@@ -11,8 +10,8 @@ export type BotCredentials = {
 export type CommandHandler = {
 	name: string;
 	callback: (
-		bot: Client,
-		ctx: WithFilter<Context, "message:text">,
+		bot: Bot,
+		ctx: Context,
 		db: Database,
 	) => Promise<void>;
 	botAdminOnly: boolean;
@@ -21,8 +20,8 @@ export type CommandHandler = {
 export type MessageHandler = {
 	name: string; // only useful to enable in db
 	callback: (
-		bot: Client,
-		ctx: WithFilter<Context, "message:text">,
+		bot: Bot,
+		ctx: Context,
 		db: Database,
 	) => Promise<void>;
 };

@@ -1,4 +1,4 @@
-import { Client, StorageLocalStorage } from "@mtkruto/mtkruto";
+import { Bot } from "grammy";
 import { Database } from "@db/sqlite";
 
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
@@ -13,7 +13,6 @@ import {
 	registerStartHandler,
 } from "./helpers/telegram.ts";
 
-import { botSettingsHandler } from "./commands/botSettings.ts";
 import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 
@@ -25,7 +24,6 @@ const commandHandlers: CommandHandler[] = [
 	warnUserHandler,
 	muteUserHandler,
 	unmuteUserHandler,
-	botSettingsHandler,
 ];
 
 if (import.meta.main) {
@@ -34,11 +32,7 @@ if (import.meta.main) {
 		botCreds.apiID == null
 	) throw "undefined bot credentials";
 
-	const bot = new Client({
-		storage: new StorageLocalStorage("bot"),
-		apiId: botCreds.apiID,
-		apiHash: botCreds.apiHash,
-	});
+	const bot = new Bot(botCreds.apiKey);
 
 	const db = new Database(dbPath);
 	log(LogTypes.INFO, `Initialized DB at path ${dbPath}`);
@@ -65,6 +59,6 @@ if (import.meta.main) {
 		registerMessageHandler(bot, handler, db);
 	}
 
-	await bot.start({ botToken: botCreds.apiKey });
+	await bot.start();
 	log(LogTypes.INFO, "Bot started");
 }

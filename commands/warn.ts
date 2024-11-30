@@ -1,18 +1,18 @@
-import { Client, Context } from "@mtkruto/mtkruto";
-import { WithFilter } from "https://deno.land/x/mtkruto@0.7.3/client/0_filters.ts";
+import { Bot, Context } from "grammy";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
 import { UserRepo } from "../types/tables/Users.ts";
 import { getUserAdminRights } from "../helpers/telegram.ts";
+import { setMuteStatus } from "./mute.ts";
 
 async function warnUser(
-	bot: Client,
-	ctx: WithFilter<Context, "message:text">,
+	bot: Bot,
+	ctx: Context,
 	db: Database,
 ) {
-	const chatId = ctx.message.chat.id;
+	const chatId = ctx.message!.chat.id;
 
-	const userToBeWarnedId = ctx.message.replyToMessage?.from?.id;
+	const userToBeWarnedId = ctx.message?.reply_to_message?.from?.id;
 	if (await getUserAdminRights(bot, chatId) == undefined) {
 		await ctx.reply("Bot does not have enough permissions");
 		return;
@@ -28,7 +28,7 @@ async function warnUser(
 	const userRepo = new UserRepo(db);
 	const userToBeWarned = await ctx.getChatMember(userToBeWarnedId);
 	const userToBeWarnedName = userToBeWarned.user.username ??
-		`${userToBeWarned.user.firstName} ${userToBeWarned.user.lastName}`;
+		`${userToBeWarned.user.first_name} ${userToBeWarned.user.last_name}`;
 
 	userRepo.addUser(userToBeWarnedId);
 	const user = userRepo.getUser(userToBeWarnedId)!;
@@ -46,25 +46,7 @@ async function warnUser(
 		return;
 	}
 
-	try {
-		await bot.setChatMemberRights(
-			chatId,
-			userToBeWarnedId,
-			{
-				rights: {
-					canSendMessages: false,
-				},
-			},
-		);
-		await ctx.reply(
-			`${userToBeWarnedName} has been warned too many times, muting them.`,
-		);
-		userRepo.InvalidateUserWarns(user, chatId);
-	} catch {
-		await ctx.reply(
-			`Error has occured with warning ${userToBeWarnedName}, reverting the warn`,
-		);
-	}
+	await setMuteStatus(bot, ctx, userToBeWarnedId, chatId, true);
 }
 
 export const warnUserHandler: CommandHandler = {
