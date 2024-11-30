@@ -44,7 +44,7 @@ async function muteUser(
 	const userToBeMuted = await ctx.getChatMember(userId);
 	const chatId = ctx.message.chat.id;
 
-	const success = await setMuteStatus(bot, ctx, userId, chatId, true);
+	const success = await setMuteStatus(bot, ctx, userId, chatId, false);
 
 	const userToBeMutedName = userToBeMuted.user.username ??
 		`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
@@ -64,7 +64,7 @@ async function unmuteUser(
 	const userToBeMuted = await ctx.getChatMember(userId);
 	const chatId = ctx.message.chat.id;
 
-	const success = await setMuteStatus(bot, ctx, userId, chatId, false);
+	const success = await setMuteStatus(bot, ctx, userId, chatId, true);
 
 	const userToBeMutedName = userToBeMuted.user.username ??
 		`${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
