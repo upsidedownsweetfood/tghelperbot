@@ -1,18 +1,21 @@
 import { Client, StorageLocalStorage } from "@mtkruto/mtkruto";
 import { Database } from "@db/sqlite";
 
+import { CommandHandler, MessageHandler } from "./types/misc.ts";
+
 import { log, LogTypes } from "./helpers/log.ts";
 import { retrieveBotCredentials } from "./helpers/utils.ts";
-import { warnUserHandler } from "./modules/warn.ts";
-import { CommandHandler, MessageHandler } from "./types/misc.ts";
+
 import {
 	registerCommandHandler,
 	registerErrorHandler,
 	registerMessageHandler,
 	registerStartHandler,
 } from "./helpers/telegram.ts";
-import { botSettingsHandler } from "./modules/botSettings.ts";
-import { muteUserHandler } from "./modules/mute.ts";
+
+import { botSettingsHandler } from "./commands/botSettings.ts";
+import { warnUserHandler } from "./commands/warn.ts";
+import { muteUserHandler } from "./commands/mute.ts";
 
 const botCreds = retrieveBotCredentials();
 const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
