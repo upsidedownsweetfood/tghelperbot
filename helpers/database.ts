@@ -5,6 +5,7 @@ import { CommandPermissionRepo } from "../types/tables/CommandPermissions.ts";
 import { User, UserRepo } from "../types/tables/Users.ts";
 import { RolesRepo } from "../types/tables/Roles.ts";
 import { CommandRepo } from "../types/tables/Commands.ts";
+import { SqlBotAdminQuery, SqlGetChatQuery } from "../constants.ts";
 
 export function checkUserPermissions(
 	user: User,
@@ -18,13 +19,8 @@ export function checkUserPermissions(
 	const commandRepo = new CommandRepo(db);
 	const commandPermissionRepo = new CommandPermissionRepo(db);
 
-	const botAdminStatement = db.prepare(
-		"SELECT * FROM Administrators WHERE User = ?",
-	);
-
-	const isAdmin: Administrator | undefined = botAdminStatement.get(
-		user.UserId,
-	);
+	const isAdmin: Administrator | undefined = db.prepare(SqlBotAdminQuery)
+		.get(user.UserId);
 	if (isAdmin != undefined) return true;
 
 	const commandId = commandRepo.getCommandIdFromName(commandName);
@@ -46,9 +42,7 @@ export function checkUserPermissions(
 }
 
 export function isChatEnabled(chatId: number, db: Database): boolean {
-	const statement = db.prepare(
-		"SELECT * FROM Chats WHERE ChatId = ?",
-	);
+	const statement = db.prepare(SqlGetChatQuery);
 	const chat: Chat | undefined = statement.get(chatId);
 
 	if (chat == undefined) return false;
@@ -56,13 +50,13 @@ export function isChatEnabled(chatId: number, db: Database): boolean {
 }
 
 export function isChatAllowed(chatId: number, db: Database): boolean {
-	const statement = db.prepare(
-		"SELECT * FROM Chats WHERE ChatId = ?",
-	);
+	const statement = db.prepare(SqlGetChatQuery);
 	const chat: Chat | undefined = statement.get(chatId);
 
 	if (chat == undefined) return false;
 	return Boolean(chat.Allowed);
 }
 
-export function createDefaultChatRoles(chatId: number, db: Database) {}
+export function createDefaultChatRoles(chatId: number, db: Database) {
+	// TODO
+}
