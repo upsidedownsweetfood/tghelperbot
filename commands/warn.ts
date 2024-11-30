@@ -46,7 +46,18 @@ async function warnUser(
 		return;
 	}
 
-	await setMuteStatus(bot, ctx, userToBeWarnedId, chatId, true);
+	const success = await setMuteStatus(
+		bot,
+		ctx,
+		userToBeWarnedId,
+		chatId,
+		true,
+	);
+
+	if (success) await ctx.reply("User has been silenced");
+	else {await ctx.reply(
+			"Could not mute the user, maybe they are a group admin?",
+		);}
 }
 
 export const warnUserHandler: CommandHandler = {

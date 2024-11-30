@@ -17,7 +17,6 @@ export async function getUserAdminRights(
 	const user = await bot.api.getMe();
 	const admins = await bot.api.getChatAdministrators(chatId);
 	const userRole = admins.find((member) => member.user.id == user.id);
-
 	return userRole;
 }
 
@@ -29,7 +28,7 @@ export function registerCommandHandler(
 	const repo = new CommandRepo(db);
 	repo.addModule(handler.name, handler.botAdminOnly);
 
-	bot.command(handler.name, async (ctx: Context) => {
+	bot.on("message").command(handler.name, async (ctx: Context) => {
 		const userRepo = new UserRepo(db);
 		const userId = ctx.message!.from!.id;
 

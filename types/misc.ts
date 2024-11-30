@@ -3,8 +3,6 @@ import { Bot, Context } from "grammy";
 
 export type BotCredentials = {
 	apiKey: string | undefined;
-	apiHash: string | undefined;
-	apiID: number | undefined;
 };
 
 export type CommandHandler = {

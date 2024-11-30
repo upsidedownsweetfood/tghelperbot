@@ -10,7 +10,8 @@ export async function setMuteStatus(
 	chatId: number,
 	muted: boolean,
 ) {
-	if (await getUserAdminRights(bot, chatId) == undefined) {
+	const botRights = await getUserAdminRights(bot, chatId);
+	if (botRights?.status != "administrator") {
 		await ctx.reply("Bot does not have enough permissions");
 		return;
 	}

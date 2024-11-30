@@ -23,8 +23,6 @@ export function makeUrlPlayNiceWithCachePlz(path: string) {
 
 export function retrieveBotCredentials(): BotCredentials {
 	return {
-		apiID: Number(Deno.env.get("BOT_API_ID")),
 		apiKey: Deno.env.get("BOT_API_TOKEN"),
-		apiHash: Deno.env.get("BOT_API_HASH"),
 	};
 }

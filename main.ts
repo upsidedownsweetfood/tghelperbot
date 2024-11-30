@@ -27,10 +27,7 @@ const commandHandlers: CommandHandler[] = [
 ];
 
 if (import.meta.main) {
-	if (
-		botCreds.apiHash == null || botCreds.apiKey == null ||
-		botCreds.apiID == null
-	) throw "undefined bot credentials";
+	if (botCreds.apiKey == null) throw "undefined bot credentials";
 
 	const bot = new Bot(botCreds.apiKey);
 
