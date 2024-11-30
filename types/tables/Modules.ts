@@ -22,5 +22,11 @@ export class ModuleRepo {
 		statement.run(name, adminOnly);
 	}
 
-	public getModulePermissions(name: string, chatId: number) {}
+	public getModuleIdFromName(name: string): number | undefined {
+		const module: Module | undefined = this.db.prepare(
+			"SELECT Id FROM Modules WHERE Name=?",
+		).get(name);
+
+		return module.Id;
+	}
 }

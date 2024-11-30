@@ -25,7 +25,7 @@ export class ChatRepo {
 			"UPDATE Chats SET Allowed = 1 WHERE ChatId = ?",
 		);
 
-		statement.get(chatId);
+		statement.run(chatId);
 	}
 
 	public EnableChat(chatId: number) {
@@ -34,6 +34,6 @@ export class ChatRepo {
 			"UPDATE Chats SET Enabled = 1 WHERE ChatId = ?",
 		);
 
-		statement.get(chatId);
+		statement.run(chatId);
 	}
 }

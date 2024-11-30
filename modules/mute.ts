@@ -4,7 +4,7 @@ import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
 import { getUserAdminRights } from "../helpers/telegram.ts";
 
-async function toggleMuteUser(
+async function muteUser(
 	bot: Client,
 	ctx: WithFilter<Context, "message:text">,
 	_db: Database,
@@ -43,8 +43,8 @@ async function toggleMuteUser(
 	}
 }
 
-export const toggleMuteUserHandler: CommandHandler = {
+export const muteUserHandler: CommandHandler = {
 	name: "mute",
-	callback: toggleMuteUser,
+	callback: muteUser,
 	botAdminOnly: false,
 };

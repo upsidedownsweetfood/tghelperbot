@@ -5,7 +5,7 @@ import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
 import { ChatRepo } from "../types/tables/Chats.ts";
 import { ModuleRepo } from "../types/tables/Modules.ts";
-import { UserRepo } from "../types/tables/Users.ts";
+import { User, UserRepo } from "../types/tables/Users.ts";
 
 export async function getUserAdminRights(
 	bot: Client,
@@ -25,10 +25,17 @@ export function registerCommandHandler(
 ) {
 	const repo = new ModuleRepo(db);
 	repo.addModule(handler.name, handler.botAdminOnly);
+
 	bot.command(handler.name, async (ctx) => {
+		const userRepo = new UserRepo(db);
+		const userId = ctx.message.from!.id;
+
+		userRepo.addUser(userId);
+		const user: User = userRepo.getUser(userId)!;
+
 		if (
 			!checkUserPermissions(
-				ctx.message.from!.id,
+				user,
 				ctx.chat.id,
 				handler.name,
 				db,
@@ -80,11 +87,18 @@ export function registerStartHandler(
 	db: Database,
 ) {
 	bot.command("start", async (ctx) => {
-		new UserRepo(db).addUser(ctx.message.from!.id);
+		const userRepo = new UserRepo(db);
+		const chatRepo = new ChatRepo(db);
+
+		const userId = ctx.message.from!.id;
+		userRepo.addUser(userId);
+
+		const user: User = userRepo.getUser(userId)!;
+
 		if (
 			!isChatAllowed(ctx.chat.id, db) &&
 			!checkUserPermissions(
-				ctx.message?.from?.id!,
+				user,
 				ctx.chat.id,
 				"INTERNAL_STARTCOMMAND_DONT_ADD_TO_DB",
 				db,
@@ -95,9 +109,9 @@ export function registerStartHandler(
 			);
 			return;
 		}
-		const repo = new ChatRepo(db);
-		repo.AllowChat(ctx.chat.id);
-		repo.EnableChat(ctx.chat.id);
+
+		chatRepo.AllowChat(ctx.chat.id);
+		chatRepo.EnableChat(ctx.chat.id);
 
 		await ctx.reply("Enabled Chat");
 	});
