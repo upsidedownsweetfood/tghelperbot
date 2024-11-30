@@ -13,15 +13,12 @@ import {
 } from "./helpers/telegram.ts";
 import { botSettingsHandler } from "./modules/botSettings.ts";
 import { muteUserHandler } from "./modules/mute.ts";
-import { bannedWordsHandler } from "./modules/bannedWords.ts";
 
 const botCreds = retrieveBotCredentials();
 
 const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
 
-const messageHandlers: MessageHandler[] = [
-	bannedWordsHandler,
-];
+const messageHandlers: MessageHandler[] = [];
 const commandHandlers: CommandHandler[] = [
 	warnUserHandler,
 	muteUserHandler,

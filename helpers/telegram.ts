@@ -4,7 +4,7 @@ import { checkUserPermissions } from "./database.ts";
 import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
 import { ChatRepo } from "../types/tables/Chats.ts";
-import { ModuleRepo } from "../types/tables/Modules.ts";
+import { CommandRepo } from "../types/tables/Commands.ts";
 import { User, UserRepo } from "../types/tables/Users.ts";
 
 export async function getUserAdminRights(
@@ -23,7 +23,7 @@ export function registerCommandHandler(
 	handler: CommandHandler,
 	db: Database,
 ) {
-	const repo = new ModuleRepo(db);
+	const repo = new CommandRepo(db);
 	repo.addModule(handler.name, handler.botAdminOnly);
 
 	bot.command(handler.name, async (ctx) => {

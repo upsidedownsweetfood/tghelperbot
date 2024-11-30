@@ -42,27 +42,27 @@ CREATE TABLE IF NOT EXISTS Administrators (
 	FOREIGN KEY (User) REFERENCES Users(UserId)
 );
 
-CREATE TABLE IF NOT EXISTS Modules (
+CREATE TABLE IF NOT EXISTS Commands (
 	Id INTEGER PRIMARY KEY,
 	Name varchar(255) NOT NULL UNIQUE,
 	Enabled boolean NOT NULL,
 	AdministratorOnly boolean NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS ModulePermissions (
+CREATE TABLE IF NOT EXISTS CommandPermissions (
 	Chat int NOT NULL,
-	Module int NOT NULL,
+	Command int NOT NULL,
 	Roles text,
 	
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
-	FOREIGN KEY (Module) REFERENCES Modules(Id)
+	FOREIGN KEY (Command) REFERENCES Commands(Id)
 );
 
-CREATE TABLE IF NOT EXISTS ModuleSettings (
+CREATE TABLE IF NOT EXISTS CommandSettings (
 	Chat int NOT NULL,
-	Module int NOT NULL,
+	Command int NOT NULL,
 	Settings text NOT NULL,
 	
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
-	FOREIGN KEY (Module) REFERENCES Modules(Id)
+	FOREIGN KEY (Command) REFERENCES Command(Id)
 )

@@ -1,10 +1,10 @@
 import { Database } from "@db/sqlite";
 import { Chat } from "../types/tables/Chats.ts";
 import { Administrator } from "../types/tables/Administrators.ts";
-import { ModulePermissionRepo } from "../types/tables/ModulePermissions.ts";
+import { CommandPermissionRepo } from "../types/tables/CommandPermissions.ts";
 import { User, UserRepo } from "../types/tables/Users.ts";
 import { RolesRepo } from "../types/tables/Roles.ts";
-import { ModuleRepo } from "../types/tables/Modules.ts";
+import { CommandRepo } from "../types/tables/Commands.ts";
 
 export function checkUserPermissions(
 	user: User,
@@ -15,8 +15,8 @@ export function checkUserPermissions(
 	// IDFK if this works
 	const userRepo = new UserRepo(db);
 	const roleRepo = new RolesRepo(db);
-	const moduleRepo = new ModuleRepo(db);
-	const modulePermissionRepo = new ModulePermissionRepo(db);
+	const commandRepo = new CommandRepo(db);
+	const commandPermissionRepo = new CommandPermissionRepo(db);
 
 	const botAdminStatement = db.prepare(
 		"SELECT * FROM Administrators WHERE User = ?",
@@ -25,21 +25,21 @@ export function checkUserPermissions(
 	const isAdmin: Administrator | undefined = botAdminStatement.get(
 		user.UserId,
 	);
-	if (isAdmin != undefined) return true; // uncomment this
+	if (isAdmin != undefined) return true;
 
-	const moduleId = moduleRepo.getModuleIdFromName(commandName);
-	if (moduleId == undefined) return false;
+	const commandId = commandRepo.getCommandIdFromName(commandName);
+	if (commandId == undefined) return false;
 
 	const userRoles = userRepo.getUserRoles(user, chatId, roleRepo);
 
-	const modulePermission = modulePermissionRepo.getModulePermissions(
+	const commandPermission = commandPermissionRepo.getCommandPermissions(
 		chatId,
-		moduleId,
+		commandId,
 	);
-	if (modulePermission == undefined) return true;
+	if (commandPermission == undefined) return true;
 
-	const AllowedRoles = modulePermissionRepo
-		.getModulePermissionsRoles(modulePermission);
+	const AllowedRoles = commandPermissionRepo
+		.getModulePermissionsRoles(commandPermission);
 
 	if (AllowedRoles == undefined) return true;
 	return userRoles.some((ur) => AllowedRoles.some((mr) => mr == ur.Name));

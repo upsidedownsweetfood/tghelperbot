@@ -1,13 +1,13 @@
 import { Database } from "@db/sqlite";
 
-export type Module = {
+export type Command = {
 	Id: number;
 	Name: string;
 	Enabled: boolean;
 	AdministratorOnly: boolean;
 };
 
-export class ModuleRepo {
+export class CommandRepo {
 	db: Database;
 
 	constructor(db: Database) {
@@ -16,17 +16,17 @@ export class ModuleRepo {
 
 	public addModule(name: string, adminOnly: boolean) {
 		const statement = this.db.prepare(
-			"INSERT OR IGNORE INTO Modules (Name, Enabled, AdministratorOnly) Values (?, 0, ?)",
+			"INSERT OR IGNORE INTO Commands (Name, Enabled, AdministratorOnly) Values (?, 0, ?)",
 		);
 
 		statement.run(name, adminOnly);
 	}
 
-	public getModuleIdFromName(name: string): number | undefined {
-		const module: Module | undefined = this.db.prepare(
-			"SELECT Id FROM Modules WHERE Name=?",
+	public getCommandIdFromName(name: string): number | undefined {
+		const command: Command | undefined = this.db.prepare(
+			"SELECT Id FROM Commands WHERE Name=?",
 		).get(name);
 
-		return module.Id;
+		return command?.Id;
 	}
 }
