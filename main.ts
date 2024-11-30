@@ -15,7 +15,6 @@ import { botSettingsHandler } from "./modules/botSettings.ts";
 import { muteUserHandler } from "./modules/mute.ts";
 
 const botCreds = retrieveBotCredentials();
-
 const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
 
 const messageHandlers: MessageHandler[] = [];
