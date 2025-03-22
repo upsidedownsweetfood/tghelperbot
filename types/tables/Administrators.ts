@@ -1,5 +1,5 @@
 export type Administrator = {
-	User: number;
+  User: number;
 };
 
 export class AdministratorRepo {
