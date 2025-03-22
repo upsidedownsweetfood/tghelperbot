@@ -66,3 +66,12 @@ CREATE TABLE IF NOT EXISTS CommandSettings (
 	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
 	FOREIGN KEY (Command) REFERENCES Command(Id)
 )
+
+CREATE TABLE IF NOT EXISTS UserInfractionLogs (
+	Id INTEGER PRIMARY KEY,
+	User int NOT NULL,
+	Log text NOT NULL,
+	Date datetime NOT NULL,
+
+	FOREIGN KEY(User) REFERENCES Users(UserId)
+)
