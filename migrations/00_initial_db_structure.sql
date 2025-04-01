@@ -9,69 +9,72 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Roles (
-	Id INTEGER PRIMARY KEY,
-	Name varchar(255) NOT NULL,
-	Chat int NOT NULL,
+	RoleName varchar(255) NOT NULL,
+	ChatId int NOT NULL,
 
-	FOREIGN KEY (Chat) REFERENCES Chats(ChatId)
+       	UNIQUE (ChatId, RoleName)
+	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS UserRoles (
-	User int NOT NULL,
-	Role INTEGER NOT NULL,
-	Chat int NOT NULL,
+	UserId int NOT NULL,
+	RoleName varchar(255) NOT NULL,
+	ChatId int NOT NULL,
 
-	FOREIGN KEY (User) REFERENCES Users(UserId),
-	FOREIGN KEY (Role) REFERENCES Roles(Id),
-	FOREIGN KEY (Chat) REFERENCES Chats(ChatId)
-);
-
-CREATE TABLE IF NOT EXISTS UserWarns (
-	User int NOT NULL,
-	Chat int NOT NULL,
-	Motivation text,
-	Date datetime NOT NULL,
-	Valid boolean NOT NULL,
-	
-	FOREIGN KEY (User) REFERENCES Users(UserId),
-	FOREIGN KEY (Chat) REFERENCES Chats(ChatId)
+	FOREIGN KEY (UserId) REFERENCES Users(UserId),
+	FOREIGN KEY (RoleName) REFERENCES Roles(RoleName),
+	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS Administrators (
-	User int NOT NULL UNIQUE,
-	FOREIGN KEY (User) REFERENCES Users(UserId)
+	UserId int NOT NULL UNIQUE,
+	FOREIGN KEY (UserId) REFERENCES Users(UserId)
 );
 
 CREATE TABLE IF NOT EXISTS Commands (
 	Id INTEGER PRIMARY KEY,
-	Name varchar(255) NOT NULL UNIQUE,
+	CommandName varchar(255) NOT NULL UNIQUE,
 	Enabled boolean NOT NULL,
 	AdministratorOnly boolean NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS CommandPermissions (
-	Chat int NOT NULL,
-	Command int NOT NULL,
+CREATE TABLE IF NOT EXISTS Permissions (
+	ChatId int NOT NULL,
+	CommandId int NOT NULL,
 	Roles text,
-	
-	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
-	FOREIGN KEY (Command) REFERENCES Commands(Id)
+
+       	UNIQUE (ChatId, CommandId),
+	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId),
+	FOREIGN KEY (CommandId) REFERENCES Commands(Id)
 );
 
-CREATE TABLE IF NOT EXISTS CommandSettings (
-	Chat int NOT NULL,
-	Command int NOT NULL,
+CREATE TABLE IF NOT EXISTS Settings (
+	ChatId int NOT NULL,
+	CommandId int NOT NULL,
 	Settings text NOT NULL,
 	
-	FOREIGN KEY (Chat) REFERENCES Chats(ChatId),
-	FOREIGN KEY (Command) REFERENCES Command(Id)
-)
+       	UNIQUE (ChatId, CommandId),
+	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId),
+	FOREIGN KEY (CommandId) REFERENCES Command(Id)
+);
 
-CREATE TABLE IF NOT EXISTS UserInfractionLogs (
-	Id INTEGER PRIMARY KEY,
-	User int NOT NULL,
+CREATE TABLE IF NOT EXISTS InfractionTypes (
+       InfractionType text NOT NULL,
+       ChatId int NOT NULL,
+
+       UNIQUE (InfractionType, ChatId),
+       FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+);
+
+CREATE TABLE IF NOT EXISTS InfractionLogs (
+	UserId int NOT NULL,
+	ChatId int NOT NULL,
+		
+	Infraction text NOT NULL,
 	Log text NOT NULL,
 	Date datetime NOT NULL,
 
-	FOREIGN KEY(User) REFERENCES Users(UserId)
-)
+	FOREIGN KEY(Infraction) REFERENCES InfractionTypes(InfractionType),
+	FOREIGN KEY(UserId) REFERENCES Users(UserId),
+       	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+);

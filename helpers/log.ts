@@ -13,6 +13,6 @@ export function log(type: LogTypes, text: string) {
   const minute = date.getMinutes();
 
   console.log(
-    ` ${type} | ${year}/${month}/${day} ${hour}:${minute} | ${text}`,
+    ` ${type}\t| ${year}/${month}/${day} ${hour}:${minute}\t| ${text}`,
   );
 }

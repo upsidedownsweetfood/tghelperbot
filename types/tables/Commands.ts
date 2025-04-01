@@ -1,4 +1,5 @@
 import { Database } from "@db/sqlite";
+import { SqlAddModuleQuery, SqlGetModuleQuery } from "../../constants.ts";
 
 export type Command = {
   Id: number;
@@ -15,17 +16,12 @@ export class CommandRepo {
   }
 
   public addModule(name: string, adminOnly: boolean) {
-    const statement = this.db.prepare(
-      "INSERT OR IGNORE INTO Commands (Name, Enabled, AdministratorOnly) Values (?, 0, ?)",
-    );
-
+    const statement = this.db.prepare(SqlAddModuleQuery);
     statement.run(name, adminOnly);
   }
 
   public getCommandIdFromName(name: string): number | undefined {
-    const command: Command | undefined = this.db.prepare(
-      "SELECT Id FROM Commands WHERE Name=?",
-    ).get(name);
+    const command: Command | undefined = this.db.prepare(SqlGetModuleQuery).get(name);
 
     return command?.Id;
   }
