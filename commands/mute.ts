@@ -73,12 +73,14 @@ async function unmuteUser(
 
 export const muteUserHandler: CommandHandler = {
   name: "mute",
+  description: "Mute a user",
   callback: muteUser,
   botAdminOnly: false,
 };
 
 export const unmuteUserHandler: CommandHandler = {
   name: "unmute",
+  description: "Unmute a user",
   callback: unmuteUser,
   botAdminOnly: false,
 };

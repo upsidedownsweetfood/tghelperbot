@@ -50,12 +50,11 @@ CREATE TABLE IF NOT EXISTS Permissions (
 
 CREATE TABLE IF NOT EXISTS Settings (
 	ChatId int NOT NULL,
-	CommandId int NOT NULL,
+	SettingKey text NOT NULL,
 	Settings text NOT NULL,
 	
-       	UNIQUE (ChatId, CommandId),
-	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId),
-	FOREIGN KEY (CommandId) REFERENCES Command(Id)
+       	UNIQUE (ChatId, SettingKey),
+	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS InfractionTypes (

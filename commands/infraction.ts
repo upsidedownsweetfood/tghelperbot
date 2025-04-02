@@ -35,36 +35,11 @@ async function warnUser(
 
   userRepo.addUser(userToBeWarnedId);
   const user = userRepo.getUser(userToBeWarnedId)!;
-
-  userRepo.addUserWarn(user, chatId, "");
-  const userWarnsCount = userRepo.getUserWarnCounts(
-    user,
-    chatId,
-  );
-
-  if (userWarnsCount <= 3) {
-    await ctx.reply(
-      `Warning user ${userToBeWarnedName}, ${userWarnsCount} out of 3`,
-    );
-    return;
-  }
-
-  const success = await setMuteStatus(
-    bot,
-    ctx,
-    userToBeWarnedId,
-    chatId,
-    true,
-  );
-
-  if (success) await ctx.reply("User has been silenced");
-  else {await ctx.reply(
-      "Could not mute the user, maybe they are a group admin?",
-    );}
 }
 
 export const warnUserHandler: CommandHandler = {
   name: "warn",
+  description: "warn a user",
   callback: warnUser,
   botAdminOnly: false,
 };

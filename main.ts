@@ -1,4 +1,5 @@
 import { Bot } from "grammy";
+import { BotCommand } from "grammy_types";
 import { Database } from "@db/sqlite";
 
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
@@ -13,7 +14,7 @@ import {
   registerStartHandler,
 } from "./helpers/telegram.ts";
 
-import { warnUserHandler } from "./commands/warn.ts";
+import { warnUserHandler } from "./commands/infraction.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 
 const botCreds = retrieveBotCredentials();
@@ -40,13 +41,18 @@ if (import.meta.main) {
   log(LogTypes.INFO, "Registering start command handler");
   registerStartHandler(bot, db);
 
+  let commands: BotCommand[] = [];
+  
   for (const handler of commandHandlers) {
     log(
       LogTypes.INFO,
       `Registering command handler: ${handler.name}`,
     );
     registerCommandHandler(bot, handler, db);
+    commands.push({command: handler.name, description: handler.description});
   }
+
+  bot.api.setMyCommands(commands);
 
   for (const handler of messageHandlers) {
     log(
@@ -55,7 +61,7 @@ if (import.meta.main) {
     );
     registerMessageHandler(bot, handler, db);
   }
-
+  
   log(LogTypes.INFO, "Bot started");
   await bot.start();
 }
