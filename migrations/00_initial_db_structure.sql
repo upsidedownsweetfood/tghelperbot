@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Roles (
-	RoleName varchar(255) NOT NULL,
-	ChatId int NOT NULL,
+	Id INTEGER PRIMARY KEY,
+	RoleName VARCHAR(255) NOT NULL,
+	ChatId INTEGER NOT NULL,
 
        	UNIQUE (ChatId, RoleName)
 	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
@@ -18,11 +19,11 @@ CREATE TABLE IF NOT EXISTS Roles (
 
 CREATE TABLE IF NOT EXISTS UserRoles (
 	UserId int NOT NULL,
-	RoleName varchar(255) NOT NULL,
+	RoleId INTEGER NOT NULL,
 	ChatId int NOT NULL,
 
 	FOREIGN KEY (UserId) REFERENCES Users(UserId),
-	FOREIGN KEY (RoleName) REFERENCES Roles(RoleName),
+	FOREIGN KEY (RoleId) REFERENCES Roles(Id),
 	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
@@ -38,7 +39,7 @@ CREATE TABLE IF NOT EXISTS Commands (
 	AdministratorOnly boolean NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS Permissions (
+CREATE TABLE IF NOT EXISTS CommandPermissions (
 	ChatId int NOT NULL,
 	CommandId int NOT NULL,
 	Roles text,

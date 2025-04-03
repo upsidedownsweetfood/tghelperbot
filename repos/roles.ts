@@ -1,11 +1,3 @@
-import { Database } from "@db/sqlite";
-
-export type Role = {
-  Id: number;
-  Name: string;
-  Chat: number;
-};
-
 export class RolesRepo {
   db: Database;
 

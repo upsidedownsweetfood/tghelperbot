@@ -18,7 +18,7 @@ import { warnUserHandler } from "./commands/infraction.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 
 const botCreds = retrieveBotCredentials();
-const dbPath = Deno.env.get("DATABASE_PATH") ?? "./database.db";
+const dbPath = Deno.env.get("DB_PATH") ?? "./database.db";
 
 const messageHandlers: MessageHandler[] = [];
 const commandHandlers: CommandHandler[] = [
@@ -41,17 +41,14 @@ if (import.meta.main) {
   log(LogTypes.INFO, "Registering start command handler");
   registerStartHandler(bot, db);
 
-  let commands: BotCommand[] = [];
-  
-  for (const handler of commandHandlers) {
+  let commands: BotCommand[] = commandHandlers.map(h => {
     log(
       LogTypes.INFO,
-      `Registering command handler: ${handler.name}`,
+      `Registering command handler: ${h.name}`,
     );
-    registerCommandHandler(bot, handler, db);
-    commands.push({command: handler.name, description: handler.description});
-  }
-
+    registerCommandHandler(bot, h, db);
+    return {command: h.name, description: h.description};
+  })
   bot.api.setMyCommands(commands);
 
   for (const handler of messageHandlers) {

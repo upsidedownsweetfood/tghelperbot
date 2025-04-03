@@ -11,13 +11,8 @@ these circumnstances.
 First off, you need to use Deno as the typescript runtime. You'll also need to
 set a few environment variables that are needed for the bot.
 
-- BOT_API_ID
 - BOT_API_TOKEN
-- BOT_API_HASH
-
-There are also a few reccomended ones.
-
-- DATABASE_PATH
+- DB_PATH
 
 After that is done, you should probably run the migrations, the instructions on
 how to do that are available further below in the README. Then, you should add
@@ -27,7 +22,7 @@ database.
 ## Migrations
 
 I didn't plan for the bot to have automatically generated migrations, if you
-make any change to the db structure, you will have to make and run a SQL script.
+make any change to the db structure, you will have to make and run a SQL script yourselg.
 
 ### Naming a new SQL script
 
@@ -60,4 +55,4 @@ cat migration_name | sqlite3 db_path
 ---
 
 This bot does not have a user agreement, or anything, but i'd personally like if
-this was not used in trans or LGBT hate groups. Thanks.
+this was not used in General hate and in LGBT hate groups. Thanks.

@@ -1,11 +1,3 @@
-import { Database } from "@db/sqlite";
-
-export type Chat = {
-  ChatId: number;
-  Enabled: boolean;
-  Allowed: boolean;
-};
-
 export class ChatRepo {
   db: Database;
 

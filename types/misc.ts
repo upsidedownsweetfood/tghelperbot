@@ -7,6 +7,7 @@ export type BotCredentials = {
 
 export type CommandHandler = {
   name: string;
+  description: string;
   callback: (
     bot: Bot,
     ctx: Context,
