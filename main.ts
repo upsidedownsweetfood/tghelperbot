@@ -16,11 +16,14 @@ import {
 
 import { warnUserHandler } from "./commands/infraction.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
+import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
 
 const botCreds = retrieveBotCredentials();
 const dbPath = Deno.env.get("DB_PATH") ?? "./database.db";
 
-const messageHandlers: MessageHandler[] = [];
+const textMessageHandlers: MessageHandler[] = [
+  lastInteractionHandler
+];
 const commandHandlers: CommandHandler[] = [
   warnUserHandler,
   muteUserHandler,
@@ -51,7 +54,7 @@ if (import.meta.main) {
   })
   bot.api.setMyCommands(commands);
 
-  for (const handler of messageHandlers) {
+  for (const handler of textMessageHandlers) {
     log(
       LogTypes.INFO,
       `Registering message handler: ${handler.name}`,

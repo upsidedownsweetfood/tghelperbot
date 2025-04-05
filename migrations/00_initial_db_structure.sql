@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS InfractionTypes (
 );
 
 CREATE TABLE IF NOT EXISTS InfractionLogs (
+       	InfractionId INTEGER PRIMARY KEY,
 	UserId int NOT NULL,
 	ChatId int NOT NULL,
 		
@@ -78,3 +79,13 @@ CREATE TABLE IF NOT EXISTS InfractionLogs (
 	FOREIGN KEY(UserId) REFERENCES Users(UserId),
        	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
+
+CREATE TABLE IF NOT EXISTS Warns (
+       InfractionId INTEGER,
+       UserId INTEGER NOT NULL,
+       ChatId INTEGER NOT NULL,
+       
+       FOREIGN KEY(InfractionId) REFERENCES InfractionLogs(InfractionId),
+       FOREIGN KEY(UserId) REFERENCES Users(UserId),
+       FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+)
