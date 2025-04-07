@@ -2,8 +2,10 @@ import { Database } from "@db/sqlite";
 import { AdministratorEntity } from "../types/entities/administrator.ts";
 import { SqlBotAdminQuery, SqlGetChatQuery } from "../constants.ts";
 import { User } from "../types/entities/user.ts"
+import { ChatEntity } from "../types/entities/chat.ts"
 
 import { UsersRepo } from "../repos/users.ts";
+import { RolesRepo } from "../repos/roles.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { CommandPermissionRepo } from "../repos/commandPermissions.ts";
 
@@ -15,6 +17,7 @@ export function checkUserPermissions(
 ): boolean {
   // IDFK if this works
   const userRepo = new UsersRepo(db);
+  const rolesRepo = new RolesRepo(db);
   const commandRepo = new CommandRepo(db);
   const commandPermissionRepo = new CommandPermissionRepo(db);
 
@@ -25,7 +28,7 @@ export function checkUserPermissions(
   const commandId = commandRepo.getCommandIdFromName(commandName);
   if (commandId == undefined) return false;
 
-  const userRoles = userRepo.getUserRoles(user.UserId, chatId);
+  const userRoles = userRepo.getUserRoles(user.UserId, chatId, rolesRepo);
 
   const commandPermission = commandPermissionRepo.getCommandPermissions(
     chatId,
@@ -37,12 +40,12 @@ export function checkUserPermissions(
     .getModulePermissionsRoles(commandPermission);
 
   if (AllowedRoles == undefined) return true;
-  return userRoles.some((ur) => AllowedRoles.some((mr) => mr == ur.Name));
+  return userRoles.some((ur) => AllowedRoles.some((mr) => mr == ur.RoleName));
 }
 
 export function isChatEnabled(chatId: number, db: Database): boolean {
   const statement = db.prepare(SqlGetChatQuery);
-  const chat: Chat | undefined = statement.get(chatId);
+  const chat: ChatEntity | undefined = statement.get(chatId);
 
   if (chat == undefined) return false;
   return Boolean(chat.Enabled);
@@ -50,7 +53,7 @@ export function isChatEnabled(chatId: number, db: Database): boolean {
 
 export function isChatAllowed(chatId: number, db: Database): boolean {
   const statement = db.prepare(SqlGetChatQuery);
-  const chat: Chat | undefined = statement.get(chatId);
+  const chat: ChatEntity | undefined = statement.get(chatId);
 
   if (chat == undefined) return false;
   return Boolean(chat.Allowed);

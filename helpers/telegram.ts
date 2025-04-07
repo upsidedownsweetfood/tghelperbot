@@ -27,7 +27,7 @@ export function registerCommandHandler(
   db: Database,
 ) {
   const repo = new CommandRepo(db);
-  repo.addModule(handler.name, handler.botAdminOnly);
+  repo.addCommand(handler.name, handler.botAdminOnly);
 
   bot.on("message").command(handler.name, async (ctx: Context) => {
     const userRepo = new UsersRepo(db);
