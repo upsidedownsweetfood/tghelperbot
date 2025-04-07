@@ -1,11 +1,11 @@
 import { Database } from "@db/sqlite";
-import { Chat } from "../types/tables/Chats.ts";
-import { Administrator } from "../types/tables/Administrators.ts";
-import { CommandPermissionRepo } from "../types/tables/CommandPermissions.ts";
-import { User, UserRepo } from "../types/tables/Users.ts";
-import { RolesRepo } from "../types/tables/Roles.ts";
-import { CommandRepo } from "../types/tables/Commands.ts";
+import { AdministratorEntity } from "../types/entities/administrator.ts";
 import { SqlBotAdminQuery, SqlGetChatQuery } from "../constants.ts";
+import { User } from "../types/entities/user.ts"
+
+import { UsersRepo } from "../repos/users.ts";
+import { CommandRepo } from "../repos/commands.ts";
+import { CommandPermissionRepo } from "../repos/commandPermissions.ts";
 
 export function checkUserPermissions(
   user: User,
@@ -14,19 +14,18 @@ export function checkUserPermissions(
   db: Database,
 ): boolean {
   // IDFK if this works
-  const userRepo = new UserRepo(db);
-  const roleRepo = new RolesRepo(db);
+  const userRepo = new UsersRepo(db);
   const commandRepo = new CommandRepo(db);
   const commandPermissionRepo = new CommandPermissionRepo(db);
 
-  const isAdmin: Administrator | undefined = db.prepare(SqlBotAdminQuery)
+  const isAdmin: AdministratorEntity | undefined = db.prepare(SqlBotAdminQuery)
     .get(user.UserId);
   if (isAdmin != undefined) return true;
 
   const commandId = commandRepo.getCommandIdFromName(commandName);
   if (commandId == undefined) return false;
 
-  const userRoles = userRepo.getUserRoles(user, chatId, roleRepo);
+  const userRoles = userRepo.getUserRoles(user.UserId, chatId);
 
   const commandPermission = commandPermissionRepo.getCommandPermissions(
     chatId,

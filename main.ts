@@ -14,7 +14,7 @@ import {
   registerStartHandler,
 } from "./helpers/telegram.ts";
 
-import { warnUserHandler } from "./commands/infraction.ts";
+import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
 

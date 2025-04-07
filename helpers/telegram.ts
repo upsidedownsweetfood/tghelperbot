@@ -1,12 +1,13 @@
 import { Bot, Context } from "grammy";
+import { Database } from "@db/sqlite";
 import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
-import { Database } from "@db/sqlite";
 import { isChatAllowed, isChatEnabled } from "./database.ts";
-import { ChatRepo } from "../types/tables/Chats.ts";
-import { CommandRepo } from "../types/tables/Commands.ts";
-import { User, UserRepo } from "../types/tables/Users.ts";
+import { ChatRepo } from "../repos/chats.ts";
+import { CommandRepo } from "../repos/commands.ts";
+import { UsersRepo } from "../repos/users.ts";
+import { User } from "../types/entities/user.ts";
 import { log } from "./log.ts";
 import { LogTypes } from "./log.ts";
 
@@ -29,7 +30,7 @@ export function registerCommandHandler(
   repo.addModule(handler.name, handler.botAdminOnly);
 
   bot.on("message").command(handler.name, async (ctx: Context) => {
-    const userRepo = new UserRepo(db);
+    const userRepo = new UsersRepo(db);
     const userId = ctx.message!.from!.id;
 
     userRepo.addUser(userId);
@@ -82,7 +83,7 @@ export function registerStartHandler(
   db: Database,
 ) {
   bot.command("start", async (ctx: Context) => {
-    const userRepo = new UserRepo(db);
+    const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
 
     const userId = ctx.message!.from!.id;
