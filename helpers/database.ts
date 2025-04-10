@@ -62,3 +62,7 @@ export function isChatAllowed(chatId: number, db: Database): boolean {
 export function createDefaultChatRoles(chatId: number, db: Database) {
   // TODO
 }
+
+export function createDefaultSettings(chatId: number, db: Database) {
+  // TODO
+}

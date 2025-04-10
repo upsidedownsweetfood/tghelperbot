@@ -1,3 +1,7 @@
-export interface WarnSettings {}
+export interface WarnSettings {
+  maxWarns: number
+}
 
-export const defaultWarnSettings: WarnSettings = {}
+export const defaultWarnSettings: WarnSettings = {
+  maxWarns: 5
+}

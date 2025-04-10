@@ -3,7 +3,7 @@ import { Database } from "@db/sqlite";
 import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
-import { isChatAllowed, isChatEnabled } from "./database.ts";
+import { isChatAllowed, isChatEnabled, createDefaultSettings } from "./database.ts";
 import { ChatRepo } from "../repos/chats.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { UsersRepo } from "../repos/users.ts";
@@ -109,6 +109,8 @@ export function registerStartHandler(
     chatRepo.AllowChat(ctx.chat!.id);
     chatRepo.EnableChat(ctx.chat!.id);
 
+    createDefaultSettings(ctx.chat!.id, db);
+    
     await ctx.reply("Enabled Chat");
   });
 }

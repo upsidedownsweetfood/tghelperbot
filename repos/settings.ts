@@ -22,6 +22,5 @@ export class SettingsRepo {
   }
 
   public addSettingJson<T>(setting_key: string, chatId: number, commandSettings: T) {
-
   }
 }
