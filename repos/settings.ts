@@ -1,3 +1,8 @@
+import { Database } from "@db/sqlite";
+import { CommandSettingsEntity, CommandSettings } from "../types/entities/settings.ts";
+
+import { SqlGetSettingByKeyQuery } from "../constants.ts";
+
 export class SettingsRepo {
   db: Database;
   
@@ -14,5 +19,9 @@ export class SettingsRepo {
       SettingKey: setting_key,
       Settings: db_settings.Settings as T
     };
+  }
+
+  public addSettingJson<T>(setting_key: string, chatId: number, commandSettings: T) {
+
   }
 }
