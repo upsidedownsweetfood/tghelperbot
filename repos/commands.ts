@@ -1,5 +1,5 @@
 import { Database } from "@db/sqlite";
-import { Command } from "../types/entities/command.ts";
+import { CommandEntity } from "../types/entities/command.ts";
 import { SqlAddCommandQuery, SqlGetCommandQuery } from "../constants.ts"
 
 export class CommandRepo {
@@ -15,7 +15,7 @@ export class CommandRepo {
   }
 
   public getCommandIdFromName(name: string): number | undefined {
-    const command: Command | undefined = this.db.prepare(SqlGetCommandQuery).get(name);
+    const command: CommandEntity | undefined = this.db.prepare(SqlGetCommandQuery).get(name);
 
     return command?.Id;
   }

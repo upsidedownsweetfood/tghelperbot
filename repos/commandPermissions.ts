@@ -1,3 +1,6 @@
+import { Database } from "@db/sqlite";
+import { CommandPermission } from "../types/entities/commandPermissions.ts";
+
 export class CommandPermissionRepo {
   db: Database;
 

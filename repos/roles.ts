@@ -1,12 +1,16 @@
+import { Database } from "@db/sqlite";
+import { Role } from "../types/entities/roles.ts";
+import { UserRoleEntity } from "../types/entities/userRole.ts";
+
 export class RolesRepo {
-  db: Database;
+  database: Database;
 
   constructor(db: Database) {
-    this.db = db;
+    this.database = db;
   }
 
   public getRole(chatId: number, roleId: number): Role | undefined {
-    return this.db.prepare(
+    return this.database.prepare(
       "SELECT * FROM Roles WHERE Chat=? AND Id=?",
     ).get(chatId, roleId);
   }
@@ -17,7 +21,7 @@ export class RolesRepo {
     );
     const userRoles: Role[] = userRolesStatement
       .all<UserRoleEntity>(chatId, userId)
-      .map((ur) => this.rolesRepo.getRole(chatId, ur.RoleId))
+      .map((ur) => this.getRole(chatId, ur.RoleId))
       .filter((r) => r != undefined);
 
     return userRoles;

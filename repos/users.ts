@@ -1,4 +1,4 @@
-import { Database } from "https://jsr.io/@db/sqlite/0.12.0/mod.ts";
+import { Database } from "@db/sqlite";
 import { User } from "../types/entities/user.ts";
 import { UserRoleEntity } from "../types/entities/userRole.ts";
 import { Role } from "../types/entities/roles.ts";

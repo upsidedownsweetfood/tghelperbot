@@ -1,3 +1,5 @@
+import { Database } from "@db/sqlite";
+
 export class ChatRepo {
   db: Database;
 

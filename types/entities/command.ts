@@ -1,5 +1,4 @@
 import { Database } from "@db/sqlite";
-import { SqlAddModuleQuery, SqlGetModuleQuery } from "../../constants.ts";
 
 export type CommandEntity = {
   Id: number;
