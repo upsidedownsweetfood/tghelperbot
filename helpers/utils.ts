@@ -33,6 +33,6 @@ export function retrieveBotCredentials(): BotCredentials {
 }
 
 export function startupChecks(db: Database) {
-  const administratorExists: boolean = (db.prepare(SqlCheckAtLeastOneAdministrator).get()! as AdminExists).item;
+  const administratorExists: boolean = db.prepare(SqlCheckAtLeastOneAdministrator).get<AdminExists>()!.item;
   if (!administratorExists) log(LogTypes.ERROR, "Add an administrator to the database")
 }

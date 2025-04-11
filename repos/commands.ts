@@ -15,8 +15,7 @@ export class CommandRepo {
   }
 
   public getCommandIdFromName(name: string): number | undefined {
-    const command: CommandEntity | undefined = this.db.prepare(SqlGetCommandQuery).get(name);
-
+    const command = this.db.prepare(SqlGetCommandQuery).get<CommandEntity>(name);
     return command?.Id;
   }
 }

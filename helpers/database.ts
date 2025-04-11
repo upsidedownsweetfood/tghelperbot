@@ -37,7 +37,7 @@ export function checkUserPermissions(
   if (commandPermission == undefined) return true;
 
   const AllowedRoles = commandPermissionRepo
-    .getModulePermissionsRoles(commandPermission);
+    .getCommandPermissionsRoles(commandPermission);
 
   if (AllowedRoles == undefined) return true;
   return userRoles.some((ur) => AllowedRoles.some((mr) => mr == ur.RoleName));
