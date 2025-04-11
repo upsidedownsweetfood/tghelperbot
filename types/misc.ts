@@ -24,3 +24,7 @@ export type MessageHandler = {
     db: Database,
   ) => Promise<void>;
 };
+
+export type AdminExists = {
+  item: boolean
+}

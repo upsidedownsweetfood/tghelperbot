@@ -5,7 +5,7 @@ import { Database } from "@db/sqlite";
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
 
 import { log, LogTypes } from "./helpers/log.ts";
-import { retrieveBotCredentials } from "./helpers/utils.ts";
+import { retrieveBotCredentials, startupChecks } from "./helpers/utils.ts";
 
 import {
   registerCommandHandler,
@@ -63,6 +63,8 @@ if (import.meta.main) {
     registerMessageHandler(bot, h, db);
   });
   
+  startupChecks(db);
+
   await bot.start();
   log(LogTypes.INFO, "Bot started");
 }
