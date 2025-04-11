@@ -60,6 +60,7 @@ export function registerCommandHandler(
   });
 }
 
+//TODO: enable/disable check here too
 export function registerMessageHandler(
   bot: Bot,
   handler: MessageHandler,
@@ -78,6 +79,7 @@ export function registerErrorHandler(
     await ctx.ctx.reply("Unknown error");
   });
 }
+
 export function registerStartHandler(
   bot: Bot,
   db: Database,
