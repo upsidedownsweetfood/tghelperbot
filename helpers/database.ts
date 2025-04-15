@@ -52,6 +52,7 @@ export function isChatEnabled(chatId: number, db: Database): boolean {
   return Boolean(chat.Enabled);
 }
 
+// Checks if chat is actually allowed to be enabled
 export function isChatAllowed(chatId: number, db: Database): boolean {
   const statement = db.prepare(SqlGetChatQuery);
   const chat: ChatEntity | undefined = statement.get(chatId);

@@ -3,7 +3,7 @@ import { Database } from "@db/sqlite";
 import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
-import { isChatAllowed, isChatEnabled, createDefaultSettings } from "./database.ts";
+import { isChatAllowed, isChatEnabled, createDefaultSettings, createDefaultChatRoles } from "./database.ts";
 import { ChatRepo } from "../repos/chats.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { UsersRepo } from "../repos/users.ts";
@@ -88,16 +88,21 @@ export function registerStartHandler(
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
 
-    const userId = ctx.message!.from!.id;
+    const chatId = ctx.chat?.id;
+
+    if (ctx.message == undefined)
+      return
+    const userId = ctx.message.from.id;
+    if (chatId == undefined || userId == undefined)
+      return
+    
     userRepo.addUser(userId);
-
     const user: User = userRepo.getUser(userId)!;
-
     if (
-      !isChatAllowed(ctx.chat!.id, db) &&
+      !isChatAllowed(chatId, db) &&
       !checkUserPermissions(
         user,
-        ctx.chat!.id,
+        chatId,
         "INTERNAL_STARTCOMMAND_DONT_ADD_TO_DB",
         db,
       )
@@ -108,11 +113,11 @@ export function registerStartHandler(
       return;
     }
 
-    chatRepo.AllowChat(ctx.chat!.id);
-    chatRepo.EnableChat(ctx.chat!.id);
+    chatRepo.AllowChat(chatId);
+    chatRepo.EnableChat(chatId);
 
-    createDefaultSettings(ctx.chat!.id, db);
-    
+    createDefaultSettings(chatId, db);
+    createDefaultChatRoles(chatId, db);
     await ctx.reply("Enabled Chat");
   });
 }
