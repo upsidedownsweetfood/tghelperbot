@@ -3,13 +3,16 @@ import { Database } from "@db/sqlite";
 import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
-import { isChatAllowed, isChatEnabled, createDefaultSettings, createDefaultChatRoles } from "./database.ts";
+import { isChatAllowed, createDefaultSettings, createDefaultChatRoles } from "./database.ts";
 import { ChatRepo } from "../repos/chats.ts";
+import { RolesRepo } from "../repos/roles.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { UsersRepo } from "../repos/users.ts";
 import { User } from "../types/entities/user.ts";
 import { log } from "./log.ts";
 import { LogTypes } from "./log.ts";
+
+import { AdminUserRole } from "../seeding/defaultChatRoles.ts";
 
 export async function getUserAdminRights(
   bot: Bot,
@@ -31,6 +34,7 @@ export function registerCommandHandler(
 
   bot.on("message").command(handler.name, async (ctx: Context) => {
     const userRepo = new UsersRepo(db);
+    const chatRepo = new ChatRepo(db);
     const userId = ctx.message!.from!.id;
 
     userRepo.addUser(userId);
@@ -49,7 +53,7 @@ export function registerCommandHandler(
       );
       return;
     }
-    if (!isChatEnabled(ctx.chat!.id, db)) {
+    if (!chatRepo.isChatEnabled(ctx.chat!.id)) {
       await ctx.reply(
         "Chat is not enabled, please run the start command",
       );
@@ -87,6 +91,7 @@ export function registerStartHandler(
   bot.command("start", async (ctx: Context) => {
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
+    const roleRepo = new RolesRepo(db);
 
     const chatId = ctx.chat?.id;
 
@@ -118,6 +123,12 @@ export function registerStartHandler(
 
     createDefaultSettings(chatId, db);
     createDefaultChatRoles(chatId, db);
+
+    const adminRoleId = roleRepo.getRoleByName(chatId, AdminUserRole);
+    if (adminRoleId == undefined)
+      return
+
+    roleRepo.addUserRole(chatId, adminRoleId.Id, userId);
     await ctx.reply("Enabled Chat");
   });
 }

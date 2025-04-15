@@ -1,5 +1,8 @@
 import { Database } from "@db/sqlite";
 
+import { ChatEntity } from "../types/entities/chat.ts";
+import { SqlGetChatQuery } from "../constants.ts";
+
 export class ChatRepo {
   db: Database;
 
@@ -29,5 +32,13 @@ export class ChatRepo {
     );
 
     statement.run(chatId);
+  }
+
+  public isChatEnabled(chatId: number): boolean {
+    const statement = this.db.prepare(SqlGetChatQuery);
+    const chat: ChatEntity | undefined = statement.get(chatId);
+    
+    if (chat == undefined) return false;
+    return chat.Enabled;
   }
 }

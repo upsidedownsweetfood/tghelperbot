@@ -44,14 +44,6 @@ export function checkUserPermissions(
   return userRoles.some((ur) => AllowedRoles.some((mr) => mr == ur.RoleName));
 }
 
-export function isChatEnabled(chatId: number, db: Database): boolean {
-  const statement = db.prepare(SqlGetChatQuery);
-  const chat: ChatEntity | undefined = statement.get(chatId);
-
-  if (chat == undefined) return false;
-  return Boolean(chat.Enabled);
-}
-
 // Checks if chat is actually allowed to be enabled
 export function isChatAllowed(chatId: number, db: Database): boolean {
   const statement = db.prepare(SqlGetChatQuery);
@@ -62,7 +54,12 @@ export function isChatAllowed(chatId: number, db: Database): boolean {
 }
 
 export function createDefaultChatRoles(chatId: number, db: Database) {
-  DefaultChatRoles.forEach(r => {})
+  const rolesRepo = new RolesRepo(db);
+  const chatRoles = rolesRepo.getRolesByChat(chatId);
+  if(chatRoles != undefined && chatRoles.length > 0)
+    return
+
+  DefaultChatRoles.forEach(r => rolesRepo.addRole(r, chatId));
 }
 
 export function createDefaultSettings(chatId: number, db: Database) {

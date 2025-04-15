@@ -1,1 +1,3 @@
-export const DefaultChatRoles: string[] = ["user", "admin"]
+export const AdminUserRole = "admin"
+export const DefaultChatRoles: string[] = ["user", AdminUserRole]
+
