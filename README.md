@@ -11,7 +11,7 @@ these circumnstances.
 First off, you need to use Deno as the typescript runtime. You'll also need to
 set a few environment variables that are needed for the bot.
 
-- BOT_API_TOKEN
+- BOT_TOKEN
 - DB_PATH
 
 After that is done, you should probably run the migrations, the instructions on
