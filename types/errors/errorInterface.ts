@@ -1,10 +1,9 @@
 // unused
+export class Result<T, ET> {
+  value: T | undefined;
+  error: ET | undefined;
 
-export class Result<ValType, ErrType> {
-  value: ValType | undefined;
-  error: ErrType | undefined;
-
-  public unwrap(): ValType | never {
+  public unwrap(): T | never {
     if (this.value != null) return this.value;
     else throw "Unwrapping with an empty value";
   }
@@ -12,4 +11,8 @@ export class Result<ValType, ErrType> {
   public isOk() {
     return this.value != null;
   }
+}
+
+export interface ErrorInterface {
+  error: string;
 }

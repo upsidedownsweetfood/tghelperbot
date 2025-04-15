@@ -13,6 +13,7 @@ import { log } from "./log.ts";
 import { LogTypes } from "./log.ts";
 
 import { AdminUserRole } from "../seeding/defaultChatRoles.ts";
+import { UndefinedSeededError } from "../types/errors/undefinedSeededError.ts";
 
 export async function getUserAdminRights(
   bot: Bot,
@@ -87,7 +88,7 @@ export function registerErrorHandler(
 export function registerStartHandler(
   bot: Bot,
   db: Database,
-) {
+): void | UndefinedSeededError {
   bot.command("start", async (ctx: Context) => {
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
@@ -129,7 +130,7 @@ export function registerStartHandler(
 
     const adminRoleId = roleRepo.getRoleByName(chatId, AdminUserRole);
     if (adminRoleId == undefined)
-      return
+      return new UndefinedSeededError;
 
     roleRepo.addUserRole(chatId, adminRoleId.Id, userId);
     await ctx.reply("Enabled Chat");
