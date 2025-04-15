@@ -118,6 +118,9 @@ export function registerStartHandler(
       return;
     }
 
+    if (chatRepo.isChatEnabled(chatId))
+      return
+
     chatRepo.AllowChat(chatId);
     chatRepo.EnableChat(chatId);
 
