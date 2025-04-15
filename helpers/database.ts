@@ -9,6 +9,8 @@ import { RolesRepo } from "../repos/roles.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { CommandPermissionRepo } from "../repos/commandPermissions.ts";
 
+import { DefaultChatRoles } from "../seeding/defaultChatRoles.ts";
+
 export function checkUserPermissions(
   user: User,
   chatId: number,
@@ -16,7 +18,6 @@ export function checkUserPermissions(
   db: Database,
 ): boolean {
   // IDFK if this works
-  const userRepo = new UsersRepo(db);
   const rolesRepo = new RolesRepo(db);
   const commandRepo = new CommandRepo(db);
   const commandPermissionRepo = new CommandPermissionRepo(db);
@@ -28,7 +29,7 @@ export function checkUserPermissions(
   const commandId = commandRepo.getCommandIdFromName(commandName);
   if (commandId == undefined) return false;
 
-  const userRoles = userRepo.getUserRoles(user.UserId, chatId, rolesRepo);
+  const userRoles = rolesRepo.getRolesByUser(user.UserId, chatId);
 
   const commandPermission = commandPermissionRepo.getCommandPermissions(
     chatId,
@@ -60,7 +61,7 @@ export function isChatAllowed(chatId: number, db: Database): boolean {
 }
 
 export function createDefaultChatRoles(chatId: number, db: Database) {
-  // TODO
+  DefaultChatRoles.forEach(r => {})
 }
 
 export function createDefaultSettings(chatId: number, db: Database) {
