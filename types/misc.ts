@@ -1,17 +1,18 @@
 import { Database } from "@db/sqlite";
-import { Bot, Context } from "grammy";
-import { BCtx } from "./bot_ctx.ts";
+import { Client, Context } from "@mtkruto/mtkruto";
 
 export type BotCredentials = {
-  apiKey: string | undefined;
+  apiId: number | undefined;
+  apiHash: string | undefined;
+  botToken: string | undefined;
 };
 
 export type CommandHandler = {
   name: string;
   description: string;
   callback: (
-    bot: Bot<BCtx>,
-    ctx: BCtx,
+    bot: Client,
+    ctx: Context,
     db: Database,
   ) => Promise<void>;
   botAdminOnly: boolean;
@@ -21,8 +22,8 @@ export type CommandHandler = {
 export type MessageHandler = {
   name: string; // only useful to enable in db
   callback: (
-    bot: Bot<BCtx>,
-    ctx: BCtx,
+    bot: Client,
+    ctx: Context,
     db: Database,
   ) => Promise<void>;
 };

@@ -1,6 +1,4 @@
-import { Bot, MemorySessionStorage } from "grammy";
-import { BotCommand, ChatMember } from "grammy_types";
-import {chatMembers} from "grammy_chat_members"
+import { BotCommand, Client, StorageLocalStorage } from "@mtkruto/mtkruto"
 import { Database } from "@db/sqlite";
 
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
@@ -10,7 +8,6 @@ import { retrieveBotCredentials, startupChecks } from "./helpers/utils.ts";
 
 import {
   registerCommandHandler,
-  registerErrorHandler,
   registerMessageHandler,
   registerStartHandler,
 } from "./helpers/telegram.ts";
@@ -18,7 +15,6 @@ import {
 import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
-import { type BCtx } from "./types/bot_ctx.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -33,40 +29,36 @@ if (import.meta.main) {
     unmuteUserHandler,
   ];
   
-  if (botCreds.apiKey == null) throw "undefined bot credentials";
+  if (botCreds.apiId == null) throw "undefined bot api id";
+  if (botCreds.apiHash == null) throw "undefined bot api key";
+  if (botCreds.botToken == null) throw "undefined bot token";
   
-  const bot = new Bot<BCtx>(botCreds.apiKey);
-  
-  const adapter = new MemorySessionStorage<ChatMember>();
-  bot.use(chatMembers(adapter));
-
+  const bot = new Client({
+    apiId: botCreds.apiId,
+    apiHash: botCreds.apiHash,
+    storage: new StorageLocalStorage("client")
+  });
   log(LogTypes.INFO, `Initialized bot`);
-
+  
   const db = new Database(dbPath);
   log(LogTypes.INFO, `Initialized DB at path ${dbPath}`);
   
-  log(LogTypes.INFO, "Registering error log handler");
-  registerErrorHandler(bot);
-
-  log(LogTypes.INFO, "Registering start command handler");
   registerStartHandler(bot, db);
+  log(LogTypes.INFO, "Registering start command handler");
 
   const commands: BotCommand[] = commandHandlers.map(h => {
-    log(LogTypes.INFO, `Registering command handler: ${h.name}`);
     registerCommandHandler(bot, h, db);
+    log(LogTypes.INFO, `Registering command handler: ${h.name}`);
     return {command: h.name, description: h.description};
   });
-  bot.api.setMyCommands(commands);
 
   textMessageHandlers.forEach( h => {
-    log(LogTypes.INFO, `Registering message handler: ${h.name}`);
     registerMessageHandler(bot, h, db);
+    log(LogTypes.INFO, `Registering message handler: ${h.name}`);
   });
   
   startupChecks(db);
 
-  await bot.start({
-      allowed_updates: ["chat_member", "message"]
-  });
+  await bot.start({botToken: botCreds.botToken})
   log(LogTypes.INFO, "Bot started");
 }

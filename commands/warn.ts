@@ -1,19 +1,18 @@
-import { Bot, Context } from "grammy";
 import { Database } from "@db/sqlite";
 import { SettingsRepo } from "../repos/settings.ts";
 import { UsersRepo } from "../repos/users.ts";
 
 import { WarnSettings } from "../types/settings/warnSettings.ts"
 import { CommandHandler } from "../types/misc.ts"
-import { type BCtx } from "../types/bot_ctx.ts";
+import { Client, Context } from "@mtkruto/mtkruto";
 
 export async function warnUser(
-  bot: Bot<BCtx>,
-  ctx: BCtx,
+  bot: Client,
+  ctx: Context,
   db: Database) {
-  const chatId = ctx.message!.chat.id;
+  const chatId = ctx.msg!.chat.id;
 
-  const userToBeWarnedId = ctx.message?.reply_to_message?.from?.id;
+  const userToBeWarnedId = ctx.msg?.replyToMessage?.from?.id;
 
   if (userToBeWarnedId == undefined) {
     await ctx.reply(
@@ -27,7 +26,7 @@ export async function warnUser(
 
   const commandSettings = settingsRepo.getSettingsJson<WarnSettings>("warn", chatId);
   const userToBeWarned = await ctx.getChatMember(userToBeWarnedId);
-  const userToBeWarnedName = userToBeWarned.user.username ?? `${userToBeWarned.user.first_name} ${userToBeWarned.user.last_name}`;
+  const userToBeWarnedName = userToBeWarned.user.username ?? `${userToBeWarned.user.firstName} ${userToBeWarned.user.lastName}`;
 
   userRepo.addUser(userToBeWarnedId);
   const user = userRepo.getUser(userToBeWarnedId)!;

@@ -1,6 +1,4 @@
-import { Bot, Context } from "grammy";
 import { Database } from "@db/sqlite";
-import { ChatMember } from "grammy_types";
 import { CommandHandler, MessageHandler } from "../types/misc.ts";
 import { checkUserPermissions } from "./database.ts";
 import { isChatAllowed, createDefaultSettings, createDefaultChatRoles } from "./database.ts";
@@ -9,39 +7,34 @@ import { RolesRepo } from "../repos/roles.ts";
 import { CommandRepo } from "../repos/commands.ts";
 import { UsersRepo } from "../repos/users.ts";
 import { User } from "../types/entities/user.ts";
-import { log } from "./log.ts";
-import { LogTypes } from "./log.ts";
 
 import { AdminUserRole } from "../seeding/defaultChatRoles.ts";
 import { UndefinedSeededError } from "../types/errors/undefinedSeededError.ts";
-import { BCtx } from "../types/bot_ctx.ts";
+import { ChatMember, Client } from "@mtkruto/mtkruto";
 
 export async function getUserAdminRights(
-  bot: Bot<BCtx>,
+  bot: Client,
   chatId: number,
 ): Promise<ChatMember | undefined> {
-  const user = await bot.api.getMe();
-  const admins = await bot.api.getChatAdministrators(chatId);
+  const user = await bot.getMe();
+  const admins = await bot.getChatAdministrators(chatId);
   const userRole = admins.find((member) => member.user.id == user.id);
   return userRole;
 }
 
 export function registerCommandHandler(
-  bot: Bot<BCtx>,
+  bot: Client,
   handler: CommandHandler,
   db: Database,
 ) {
   const repo = new CommandRepo(db);
   repo.addCommand(handler.name, handler.botAdminOnly);
 
-  bot.on("message").command(handler.name, async (ctx: BCtx) => {
+  bot.on("message").command(handler.name, async (ctx) => {
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
     const userId = ctx.message!.from!.id;
     const chatId = ctx.chat?.id;
-
-    if (chatId == undefined)
-      return;
 
     userRepo.addUser(userId);
     const user: User = userRepo.getUser(userId)!;
@@ -72,34 +65,25 @@ export function registerCommandHandler(
 
 //TODO: enable/disable check here too
 export function registerMessageHandler(
-  bot: Bot<BCtx>,
+  bot: Client,
   handler: MessageHandler,
   db: Database,
 ) {
-  bot.on("message", async (ctx: BCtx) => {
+  bot.on("message", async (ctx) => {
     await handler.callback(bot, ctx, db);
   });
 }
 
-export function registerErrorHandler(
-  bot: Bot<BCtx>,
-) {
-  bot.catch(async (ctx) => {
-    log(LogTypes.ERROR, String(ctx.error));
-    await ctx.ctx.reply("Unknown error");
-  });
-}
-
 export function registerStartHandler(
-  bot: Bot<BCtx>,
+  bot: Client,
   db: Database,
 ): void | UndefinedSeededError {
-  bot.command("start", async (ctx: Context) => {
+  bot.command("start", async (ctx) => {
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
     const roleRepo = new RolesRepo(db);
 
-    const chatId = ctx.chat?.id;
+    const chatId = ctx.chat.id;
 
     if (ctx.message == undefined)
       return

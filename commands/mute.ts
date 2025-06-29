@@ -1,16 +1,15 @@
-import { Bot } from "grammy";
+import { Client, Context } from "@mtkruto/mtkruto";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
-import { type BCtx } from "../types/bot_ctx.ts";
 
 export async function setMuteStatus(
-  bot: Bot<BCtx>,
-  ctx: BCtx,
+  bot: Client,
+  ctx: Context,
   userId: number,
   chatId: number,
   muted: boolean,
 ) {
-  if (!ctx.message?.reply_to_message) {
+  if (!ctx.msg?.replyToMessage) {
     await ctx.reply(
       "You need to reply to a user's message to mute them",
     );
@@ -18,8 +17,10 @@ export async function setMuteStatus(
   }
 
   try {
-    await bot.api.restrictChatMember(chatId, userId, {
-      can_send_messages: muted,
+    await bot.setChatMemberRights(chatId, userId, {
+      "rights": {
+        "canSendMessages": muted
+      }
     });
     return true;
   } catch {
@@ -28,36 +29,36 @@ export async function setMuteStatus(
 }
 
 async function muteUser(
-  bot: Bot<BCtx>,
-  ctx: BCtx,
+  bot: Client,
+  ctx: Context,
   _db: Database,
 ) {
-  const userId = ctx.message!.reply_to_message!.from!.id;
+  const userId = ctx.msg!.replyToMessage!.from!.id;
   const userToBeMuted = await ctx.getChatMember(userId);
-  const chatId = ctx.message!.chat.id;
+  const chatId = ctx.msg!.chat.id;
 
   const success = await setMuteStatus(bot, ctx, userId, chatId, false);
 
   const userToBeMutedName = userToBeMuted.user.username ??
-    `${userToBeMuted.user.first_name} ${userToBeMuted.user.last_name}`;
+    `${userToBeMuted.user.firstName} ${userToBeMuted.user.lastName}`;
 
   if (success) await ctx.reply(`Muted User ${userToBeMutedName}`);
   else await ctx.reply(`Error has occured with muting ${userToBeMutedName}`);
 }
 
 async function unmuteUser(
-  bot: Bot<BCtx>,
-  ctx: BCtx,
+  bot: Client,
+  ctx: Context,
   _db: Database,
 ) {
-  const userId = ctx.message!.reply_to_message!.from!.id;
+  const userId = ctx.msg!.replyToMessage!.from!.id;
   const userToBeUnmuted = await ctx.getChatMember(userId);
-  const chatId = ctx.message!.chat.id;
+  const chatId = ctx.msg!.chat.id;
 
   const success = await setMuteStatus(bot, ctx, userId, chatId, true);
 
   const userToBeMutedName = userToBeUnmuted.user.username ??
-    `${userToBeUnmuted.user.first_name} ${userToBeUnmuted.user.last_name}`;
+    `${userToBeUnmuted.user.firstName} ${userToBeUnmuted.user.lastName}`;
 
   if (success) await ctx.reply(`unmuted User ${userToBeMutedName}`);
   else {await ctx.reply(

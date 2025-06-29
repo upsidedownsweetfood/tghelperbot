@@ -1,17 +1,14 @@
-import { Bot } from "grammy";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
 import { log, LogTypes } from "../helpers/log.ts";
-import { UsersRepo } from "../repos/users.ts";
-import { type BCtx } from "../types/bot_ctx.ts";
+import { Client, Context } from "@mtkruto/mtkruto";
 
 export async function execute_purge(
-  bot: Bot<BCtx>,
-  ctx: BCtx,
+  bot: Client,
+  ctx: Context,
   db: Database
 ) {
     log(LogTypes.INFO, "EXECUTING PURGE")
-    const ur = new UsersRepo(db)
 }
 
 export const purgeInactiveUsersHandler: CommandHandler = {

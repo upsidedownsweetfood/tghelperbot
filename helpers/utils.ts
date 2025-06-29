@@ -28,7 +28,9 @@ export function makeUrlPlayNiceWithCachePlz(path: string) {
 
 export function retrieveBotCredentials(): BotCredentials {
   return {
-    apiKey: Deno.env.get("BOT_TOKEN"),
+    apiId: Number(Deno.env.get("BOT_API_ID")),
+    apiHash: Deno.env.get("BOT_API_HASH"),
+    botToken: Deno.env.get("BOT_TOKEN")
   };
 }
 
