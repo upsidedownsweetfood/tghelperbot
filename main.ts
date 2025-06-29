@@ -15,6 +15,7 @@ import {
 import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
+import { purgeInactiveUsersHandler } from "./commands/thepurge.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -27,6 +28,7 @@ if (import.meta.main) {
     warnUserHandler,
     muteUserHandler,
     unmuteUserHandler,
+    purgeInactiveUsersHandler
   ];
   
   if (botCreds.apiId == null) throw "undefined bot api id";
