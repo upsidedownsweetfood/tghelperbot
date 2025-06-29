@@ -1,10 +1,11 @@
-import { Bot, Context } from "grammy";
+import { Bot } from "grammy";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
+import { type BCtx } from "../types/bot_ctx.ts";
 
 export async function setMuteStatus(
-  bot: Bot,
-  ctx: Context,
+  bot: Bot<BCtx>,
+  ctx: BCtx,
   userId: number,
   chatId: number,
   muted: boolean,
@@ -27,8 +28,8 @@ export async function setMuteStatus(
 }
 
 async function muteUser(
-  bot: Bot,
-  ctx: Context,
+  bot: Bot<BCtx>,
+  ctx: BCtx,
   _db: Database,
 ) {
   const userId = ctx.message!.reply_to_message!.from!.id;
@@ -45,8 +46,8 @@ async function muteUser(
 }
 
 async function unmuteUser(
-  bot: Bot,
-  ctx: Context,
+  bot: Bot<BCtx>,
+  ctx: BCtx,
   _db: Database,
 ) {
   const userId = ctx.message!.reply_to_message!.from!.id;

@@ -14,9 +14,10 @@ import { LogTypes } from "./log.ts";
 
 import { AdminUserRole } from "../seeding/defaultChatRoles.ts";
 import { UndefinedSeededError } from "../types/errors/undefinedSeededError.ts";
+import { BCtx } from "../types/bot_ctx.ts";
 
 export async function getUserAdminRights(
-  bot: Bot,
+  bot: Bot<BCtx>,
   chatId: number,
 ): Promise<ChatMember | undefined> {
   const user = await bot.api.getMe();
@@ -26,14 +27,14 @@ export async function getUserAdminRights(
 }
 
 export function registerCommandHandler(
-  bot: Bot,
+  bot: Bot<BCtx>,
   handler: CommandHandler,
   db: Database,
 ) {
   const repo = new CommandRepo(db);
   repo.addCommand(handler.name, handler.botAdminOnly);
 
-  bot.on("message").command(handler.name, async (ctx: Context) => {
+  bot.on("message").command(handler.name, async (ctx: BCtx) => {
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
     const userId = ctx.message!.from!.id;
@@ -71,17 +72,17 @@ export function registerCommandHandler(
 
 //TODO: enable/disable check here too
 export function registerMessageHandler(
-  bot: Bot,
+  bot: Bot<BCtx>,
   handler: MessageHandler,
   db: Database,
 ) {
-  bot.on("message", async (ctx: Context) => {
+  bot.on("message", async (ctx: BCtx) => {
     await handler.callback(bot, ctx, db);
   });
 }
 
 export function registerErrorHandler(
-  bot: Bot,
+  bot: Bot<BCtx>,
 ) {
   bot.catch(async (ctx) => {
     log(LogTypes.ERROR, String(ctx.error));
@@ -90,7 +91,7 @@ export function registerErrorHandler(
 }
 
 export function registerStartHandler(
-  bot: Bot,
+  bot: Bot<BCtx>,
   db: Database,
 ): void | UndefinedSeededError {
   bot.command("start", async (ctx: Context) => {

@@ -5,10 +5,11 @@ import { UsersRepo } from "../repos/users.ts";
 
 import { WarnSettings } from "../types/settings/warnSettings.ts"
 import { CommandHandler } from "../types/misc.ts"
+import { type BCtx } from "../types/bot_ctx.ts";
 
 export async function warnUser(
-  bot: Bot,
-  ctx: Context,
+  bot: Bot<BCtx>,
+  ctx: BCtx,
   db: Database) {
   const chatId = ctx.message!.chat.id;
 

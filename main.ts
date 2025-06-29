@@ -1,5 +1,6 @@
-import { Bot } from "grammy";
-import { BotCommand } from "grammy_types";
+import { Bot, MemorySessionStorage } from "grammy";
+import { BotCommand, ChatMember } from "grammy_types";
+import {chatMembers} from "grammy_chat_members"
 import { Database } from "@db/sqlite";
 
 import { CommandHandler, MessageHandler } from "./types/misc.ts";
@@ -17,6 +18,7 @@ import {
 import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
+import { type BCtx } from "./types/bot_ctx.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -32,8 +34,12 @@ if (import.meta.main) {
   ];
   
   if (botCreds.apiKey == null) throw "undefined bot credentials";
+  
+  const bot = new Bot<BCtx>(botCreds.apiKey);
+  
+  const adapter = new MemorySessionStorage<ChatMember>();
+  bot.use(chatMembers(adapter));
 
-  const bot = new Bot(botCreds.apiKey);
   log(LogTypes.INFO, `Initialized bot`);
 
   const db = new Database(dbPath);
@@ -46,25 +52,21 @@ if (import.meta.main) {
   registerStartHandler(bot, db);
 
   const commands: BotCommand[] = commandHandlers.map(h => {
-    log(
-      LogTypes.INFO,
-      `Registering command handler: ${h.name}`,
-    );
+    log(LogTypes.INFO, `Registering command handler: ${h.name}`);
     registerCommandHandler(bot, h, db);
     return {command: h.name, description: h.description};
   });
   bot.api.setMyCommands(commands);
 
   textMessageHandlers.forEach( h => {
-    log(
-      LogTypes.INFO,
-      `Registering message handler: ${h.name}`,
-    );
+    log(LogTypes.INFO, `Registering message handler: ${h.name}`);
     registerMessageHandler(bot, h, db);
   });
   
   startupChecks(db);
 
-  await bot.start();
+  await bot.start({
+      allowed_updates: ["chat_member", "message"]
+  });
   log(LogTypes.INFO, "Bot started");
 }
