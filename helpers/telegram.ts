@@ -37,27 +37,31 @@ export function registerCommandHandler(
     const userRepo = new UsersRepo(db);
     const chatRepo = new ChatRepo(db);
     const userId = ctx.message!.from!.id;
+    const chatId = ctx.chat?.id;
+
+    if (chatId == undefined)
+      return;
 
     userRepo.addUser(userId);
     const user: User = userRepo.getUser(userId)!;
 
-    if (
-      !checkUserPermissions(
-        user,
-        ctx.chat!.id,
-        handler.name,
-        db,
-      )
-    ) {
+    if (!checkUserPermissions(user, ctx.chat!.id, handler.name, db)) {
       await ctx.reply(
         "Member doesn't have enough permissions",
       );
       return;
     }
-    if (!chatRepo.isChatEnabled(ctx.chat!.id)) {
+
+    if (!chatRepo.isChatEnabled(chatId)) {
       await ctx.reply(
         "Chat is not enabled, please run the start command",
       );
+      return;
+    }
+
+    const botRights = await getUserAdminRights(bot, chatId);
+    if (botRights == undefined) {
+      await ctx.reply("Bot does not have enough permissions");
       return;
     }
 

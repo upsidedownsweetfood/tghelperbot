@@ -1,6 +1,5 @@
 import { Bot, Context } from "grammy";
 import { Database } from "@db/sqlite";
-import { getUserAdminRights } from "../helpers/telegram.ts";
 import { SettingsRepo } from "../repos/settings.ts";
 import { UsersRepo } from "../repos/users.ts";
 
@@ -14,10 +13,6 @@ export async function warnUser(
   const chatId = ctx.message!.chat.id;
 
   const userToBeWarnedId = ctx.message?.reply_to_message?.from?.id;
-  if (await getUserAdminRights(bot, chatId) == undefined) {
-    await ctx.reply("Bot does not have enough permissions");
-    return;
-  }
 
   if (userToBeWarnedId == undefined) {
     await ctx.reply(
@@ -41,5 +36,6 @@ export const warnUserHandler: CommandHandler = {
   name: "warn",
   description: "warn a user",
   callback: warnUser,
-  botAdminOnly: false
+  botAdminOnly: false,
+  botNeedsAdmin: true
 }

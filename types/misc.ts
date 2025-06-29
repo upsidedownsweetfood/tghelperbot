@@ -14,6 +14,7 @@ export type CommandHandler = {
     db: Database,
   ) => Promise<void>;
   botAdminOnly: boolean;
+  botNeedsAdmin: boolean;
 };
 
 export type MessageHandler = {

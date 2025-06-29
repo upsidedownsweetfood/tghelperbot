@@ -1,7 +1,6 @@
 import { Bot, Context } from "grammy";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
-import { getUserAdminRights } from "../helpers/telegram.ts";
 
 export async function setMuteStatus(
   bot: Bot,
@@ -10,12 +9,6 @@ export async function setMuteStatus(
   chatId: number,
   muted: boolean,
 ) {
-  const botRights = await getUserAdminRights(bot, chatId);
-  if (botRights?.status != "administrator") {
-    await ctx.reply("Bot does not have enough permissions");
-    return;
-  }
-
   if (!ctx.message?.reply_to_message) {
     await ctx.reply(
       "You need to reply to a user's message to mute them",
@@ -76,6 +69,7 @@ export const muteUserHandler: CommandHandler = {
   description: "Mute a user",
   callback: muteUser,
   botAdminOnly: false,
+  botNeedsAdmin: true
 };
 
 export const unmuteUserHandler: CommandHandler = {
@@ -83,4 +77,5 @@ export const unmuteUserHandler: CommandHandler = {
   description: "Unmute a user",
   callback: unmuteUser,
   botAdminOnly: false,
+  botNeedsAdmin: true
 };
