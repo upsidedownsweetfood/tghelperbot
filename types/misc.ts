@@ -7,13 +7,14 @@ export type BotCredentials = {
   botToken: string | undefined;
 };
 
-export type CommandHandler = {
+export type CommandHandler<T> = {
   name: string;
   description: string;
   callback: (
     bot: Client,
     ctx: Context,
     db: Database,
+    commandData: T
   ) => Promise<void>;
   botAdminOnly: boolean;
   botNeedsAdmin: boolean;
