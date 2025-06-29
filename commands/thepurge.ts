@@ -14,11 +14,13 @@ export async function execute_purge(
     return;
 
   const inactiveUsers = (await bot.getChatMembers(chatId)).filter(async m => {
-    const messages = await ctx.searchMessages("", {
-      from: m.user.id
-    })
-
-    return messages.length
+    if (!m.user.isBot)
+    {
+      const messages = await ctx.searchMessages("", {
+        from: m.user.id
+      })
+      return messages.length
+    }
   })
   await ctx.reply(String(inactiveUsers))
 }
