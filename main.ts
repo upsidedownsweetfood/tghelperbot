@@ -7,7 +7,7 @@ import { log, LogTypes } from "./helpers/log.ts";
 import { retrieveBotCredentials, startupChecks } from "./helpers/utils.ts";
 
 import {
-  registerCommandHandler,
+  registerTextCommandHandler,
   registerMessageHandler,
   registerStartHandler,
 } from "./helpers/telegram.ts";
@@ -16,6 +16,7 @@ import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
 import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
 import { purgeInactiveUsersHandler } from "./commands/thepurge.ts";
+import { kickUserHandler } from "./commands/kick.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -24,11 +25,12 @@ if (import.meta.main) {
   const textMessageHandlers: MessageHandler[] = [
     lastInteractionHandler
   ];
-  const commandHandlers: CommandHandler[] = [
+  const commandHandlers: CommandHandler<any>[] = [
     warnUserHandler,
     muteUserHandler,
     unmuteUserHandler,
-    purgeInactiveUsersHandler
+    purgeInactiveUsersHandler,
+    kickUserHandler
   ];
   
   if (botCreds.apiId == null) throw "undefined bot api id";
@@ -49,7 +51,7 @@ if (import.meta.main) {
   log(LogTypes.INFO, "Registering start command handler");
 
   const commands: BotCommand[] = commandHandlers.map(h => {
-    registerCommandHandler(bot, h, db);
+    registerTextCommandHandler(bot, h, db);
     log(LogTypes.INFO, `Registering command handler: ${h.name}`);
     return {command: h.name, description: h.description};
   });
