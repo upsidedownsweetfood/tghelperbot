@@ -1,6 +1,6 @@
 import { Message } from "@mtkruto/mtkruto";
 
-export type MessageDataType = {
+export type CustomMessageContext = {
     message: Message
     body: string
 };

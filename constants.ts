@@ -1,13 +1,15 @@
 // START SQL QUERIES //
 
 // ADMINISTRATORS
-export const SqlCheckAtLeastOneAdministrator = "SELECT (COUNT(*) > 0) AS item FROM Administrators"
+export const SqlCheckAtLeastOneAdministrator = "SELECT (COUNT(*) > 0) AS item FROM Administrators";
+export const SqlBotAdminQuery = "SELECT * FROM Administrators WHERE UserId = ?";
+
+// Activity Logs //
+export const SqlAddActivityLog = "INSERT INTO ActivityLogs (UserId, ChatId, LogDate, LogType) Values (?, ?, DateTime('now'), ?)";
 
 // Commands //
 export const SqlAddCommandQuery = "INSERT OR IGNORE INTO Commands (CommandName, Enabled, AdministratorOnly) Values (?, 0, ?)";
 export const SqlGetCommandQuery = "SELECT Id FROM Commands WHERE CommandName=?";
-
-export const SqlBotAdminQuery = "SELECT * FROM Administrators WHERE UserId = ?";
 
 // CHATS //
 export const SqlGetChatQuery = "SELECT * FROM Chats WHERE ChatId = ?";
@@ -22,4 +24,5 @@ export const SqlAddUserRoleQuery = "INSERT OR IGNORE INTO UserRoles (RoleId, Cha
 
 // SETTINGS //
 export const SqlGetSettingByKeyQuery = "SELECT * FROM Settings WHERE SettingKey = ? AND ChatId = ?";
+
 // END SQL QUERIES //

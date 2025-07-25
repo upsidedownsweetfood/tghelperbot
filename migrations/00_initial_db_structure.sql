@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS Roles (
 	RoleName VARCHAR(255) NOT NULL,
 	ChatId INTEGER NOT NULL,
 
-       	UNIQUE (ChatId, RoleName)
+    UNIQUE (ChatId, RoleName)
 	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS CommandPermissions (
 	CommandId int NOT NULL,
 	Roles text,
 
-       	UNIQUE (ChatId, CommandId),
+    UNIQUE (ChatId, CommandId),
 	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId),
 	FOREIGN KEY (CommandId) REFERENCES Commands(Id)
 );
@@ -54,20 +54,20 @@ CREATE TABLE IF NOT EXISTS Settings (
 	SettingKey text NOT NULL,
 	Settings text NOT NULL,
 	
-       	UNIQUE (ChatId, SettingKey),
+    UNIQUE (ChatId, SettingKey),
 	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS InfractionTypes (
-       InfractionType text NOT NULL,
-       ChatId int NOT NULL,
+    InfractionType text NOT NULL,
+    ChatId int NOT NULL,
 
-       UNIQUE (InfractionType, ChatId),
-       FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+    UNIQUE (InfractionType, ChatId),
+    FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS InfractionLogs (
-       	InfractionId INTEGER PRIMARY KEY,
+    InfractionId INTEGER PRIMARY KEY,
 	UserId int NOT NULL,
 	ChatId int NOT NULL,
 		
@@ -77,15 +77,26 @@ CREATE TABLE IF NOT EXISTS InfractionLogs (
 
 	FOREIGN KEY(Infraction) REFERENCES InfractionTypes(InfractionType),
 	FOREIGN KEY(UserId) REFERENCES Users(UserId),
-       	FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+    FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
 );
 
 CREATE TABLE IF NOT EXISTS Warns (
-       InfractionId INTEGER,
-       UserId INTEGER NOT NULL,
-       ChatId INTEGER NOT NULL,
+    InfractionId INTEGER,
+    UserId INTEGER NOT NULL,
+    ChatId INTEGER NOT NULL,
        
-       FOREIGN KEY(InfractionId) REFERENCES InfractionLogs(InfractionId),
-       FOREIGN KEY(UserId) REFERENCES Users(UserId),
-       FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
-)
+    FOREIGN KEY(InfractionId) REFERENCES InfractionLogs(InfractionId),
+	FOREIGN KEY(UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+);
+
+CREATE TABLE IF NOT EXISTS ActivityLogs (
+	UserId INTEGER NOT NULL,
+	ChatId INTEGER NOT NULL,
+
+	LogDate DATETIME NOT NULL,
+	LogType TEXT NOT NULL,
+
+	FOREIGN KEY(UserId) REFERENCES Users(UserId),
+    FOREIGN KEY (ChatId) REFERENCES Chats(ChatId)
+);

@@ -3,7 +3,7 @@ import { Database } from "@db/sqlite";
 import { log, LogTypes } from "../helpers/log.ts";
 import { chatAdministratorRightsToTlObject, Client, Context } from "@mtkruto/mtkruto";
 import { typeByExtension } from "jsr:@std/media-types@1.1.0/type-by-extension";
-import { MessageDataType } from "../types/messageDataTypes.ts";
+import { CustomMessageContext } from "../types/messageDataTypes.ts";
 
 export async function execute_purge(
   bot: Client,
@@ -22,7 +22,7 @@ export async function execute_purge(
   }
 }
 
-export const purgeInactiveUsersHandler: CommandHandler<MessageDataType> = {
+export const purgeInactiveUsersHandler: CommandHandler<CustomMessageContext> = {
     name: "in_purge",
     description: "purge inactive users",
     callback: execute_purge,

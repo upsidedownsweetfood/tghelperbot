@@ -20,12 +20,13 @@ export type CommandHandler<T> = {
   botNeedsAdmin: boolean;
 };
 
-export type MessageHandler = {
+export type MessageHandler<T> = {
   name: string; // only useful to enable in db
   callback: (
     bot: Client,
     ctx: Context,
     db: Database,
+    custom_ctx: T
   ) => Promise<void>;
 };
 

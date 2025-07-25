@@ -1,7 +1,7 @@
 import { Client, Context } from "@mtkruto/mtkruto";
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
-import { MessageDataType } from "../types/messageDataTypes.ts";
+import { CustomMessageContext } from "../types/messageDataTypes.ts";
 
 export async function setMuteStatus(
   bot: Client,
@@ -67,7 +67,7 @@ async function unmuteUser(
     );}
 }
 
-export const muteUserHandler: CommandHandler<MessageDataType> = {
+export const muteUserHandler: CommandHandler<CustomMessageContext> = {
   name: "mute",
   description: "Mute a user",
   callback: muteUser,
@@ -75,7 +75,7 @@ export const muteUserHandler: CommandHandler<MessageDataType> = {
   botNeedsAdmin: true
 };
 
-export const unmuteUserHandler: CommandHandler<MessageDataType> = {
+export const unmuteUserHandler: CommandHandler<CustomMessageContext> = {
   name: "unmute",
   description: "Unmute a user",
   callback: unmuteUser,

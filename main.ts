@@ -14,15 +14,16 @@ import {
 
 import { warnUserHandler } from "./commands/warn.ts";
 import { muteUserHandler, unmuteUserHandler } from "./commands/mute.ts";
-import { lastInteractionHandler } from "./onMessage/last_interaction.ts";
+import { lastInteractionHandler } from "./onMessage/register_message_interaction.ts";
 import { purgeInactiveUsersHandler } from "./commands/thepurge.ts";
 import { kickUserHandler } from "./commands/kick.ts";
+import { CustomMessageContext } from "./types/messageDataTypes.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
   const dbPath = Deno.env.get("DB_PATH") ?? "./database.db";
 
-  const textMessageHandlers: MessageHandler[] = [
+  const textMessageHandlers: MessageHandler<CustomMessageContext>[] = [
     lastInteractionHandler
   ];
   const commandHandlers: CommandHandler<any>[] = [

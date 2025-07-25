@@ -1,7 +1,7 @@
 import { Database } from "@db/sqlite";
 import { Client, Context } from "@mtkruto/mtkruto";
 import { CommandHandler } from "../types/misc.ts";
-import { MessageDataType } from "../types/messageDataTypes.ts";
+import { CustomMessageContext } from "../types/messageDataTypes.ts";
 import { getUserAdminRights, getUserFromApi } from "../helpers/telegram.ts";
 import { log, LogTypes } from "../helpers/log.ts";
 
@@ -9,7 +9,7 @@ export async function kickUser(
   bot: Client,
   ctx: Context,
   db: Database,
-  messageData: MessageDataType
+  messageData: CustomMessageContext
 ) {
     const chatId = ctx.chat?.id;
     if (!chatId)
@@ -23,7 +23,7 @@ export async function kickUser(
         bot.kickChatMember(chatId, messageData.body)
 }
 
-export const kickUserHandler: CommandHandler<MessageDataType> = {
+export const kickUserHandler: CommandHandler<CustomMessageContext> = {
   name: "kick",
   description: "kick a user",
   callback: kickUser,

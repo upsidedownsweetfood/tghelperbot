@@ -11,7 +11,7 @@ import { User } from "../types/entities/user.ts";
 import { AdminUserRole } from "../seeding/defaultChatRoles.ts";
 import { UndefinedSeededError } from "../types/errors/undefinedSeededError.ts";
 import { ChatMember, Client } from "@mtkruto/mtkruto";
-import { MessageDataType } from "../types/messageDataTypes.ts";
+import { CustomMessageContext } from "../types/messageDataTypes.ts";
 
 export async function getUserAdminRights(
   bot: Client,
@@ -34,7 +34,7 @@ export async function getUserFromApi(bot: Client, chatId: number, userId: number
 }
 export function registerTextCommandHandler(
   bot: Client,
-  handler: CommandHandler<MessageDataType>,
+  handler: CommandHandler<CustomMessageContext>,
   db: Database,
 ) {
   const repo = new CommandRepo(db);
@@ -68,7 +68,8 @@ export function registerTextCommandHandler(
       await ctx.reply("Bot does not have enough permissions");
       return;
     }
-    const messagedata: MessageDataType = {
+    const messagedata: CustomMessageContext = {
+      message: ctx.message,
       body: ctx.msg.text.replace("/"+handler.name, "")
     } 
     await handler.callback(bot, ctx, db, messagedata);
@@ -78,11 +79,15 @@ export function registerTextCommandHandler(
 //TODO: enable/disable check here too
 export function registerMessageHandler(
   bot: Client,
-  handler: MessageHandler,
-  db: Database,
+  handler: MessageHandler<CustomMessageContext>,
+  db: Database
 ) {
   bot.on("message", async (ctx) => {
-    await handler.callback(bot, ctx, db);
+    const messagedata: CustomMessageContext = {
+      message: ctx.message,
+      body: ""
+    }; 
+    await handler.callback(bot, ctx, db, messagedata);
   });
 }
 
