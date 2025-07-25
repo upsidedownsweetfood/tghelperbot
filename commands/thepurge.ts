@@ -22,6 +22,7 @@ export async function execute_purge(
       return messages.length
     }
   })
+  await ctx.reply(String(inactiveUsers))
 }
 
 export const purgeInactiveUsersHandler: CommandHandler = {
