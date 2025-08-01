@@ -10,7 +10,7 @@ export class CommandPermissionRepo {
 
   public getCommandPermissions(chatId: number, commandId: number): CommandPermission | undefined {
     return this.db.prepare(
-      "SELECT * FROM CommandPermissions WHERE Chat=? AND Command=?",
+      "SELECT * FROM CommandPermissions WHERE Chats=? AND Command=?",
     ).get(chatId, commandId);
   }
 
