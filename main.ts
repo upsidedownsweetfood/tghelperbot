@@ -19,6 +19,7 @@ import { purgeInactiveUsersHandler } from "./commands/thepurge.ts";
 import { kickUserHandler } from "./commands/kick.ts";
 import { CustomMessageContext } from "./types/messageDataTypes.ts";
 import { inactiveListHandler } from "./commands/inactive.ts";
+import { memberInfoHandler } from "./commands/info.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -29,6 +30,7 @@ if (import.meta.main) {
   ];
   const commandHandlers: CommandHandler<any>[] = [
     warnUserHandler,
+    memberInfoHandler,
     muteUserHandler,
     unmuteUserHandler,
     purgeInactiveUsersHandler,

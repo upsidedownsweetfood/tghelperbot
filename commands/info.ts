@@ -25,7 +25,7 @@ async function memberList(bot: Client, ctx: Context, db: Database, custom_contex
   }
 }
 
-export const inactiveListHandler: CommandHandler<CustomMessageContext> = {
+export const memberInfoHandler: CommandHandler<CustomMessageContext> = {
   name: "info",
   description: "a command to list user info",
   callback: memberList,
