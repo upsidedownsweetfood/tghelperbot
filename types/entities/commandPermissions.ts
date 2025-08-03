@@ -1,7 +1,7 @@
 import { Database } from "@db/sqlite";
 
 export type CommandPermission = {
-  Chat: number;
+  ChatId: number;
   Module: number;
   Roles: string | undefined;
 };

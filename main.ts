@@ -18,6 +18,7 @@ import { lastInteractionHandler } from "./onMessage/register_message_interaction
 import { purgeInactiveUsersHandler } from "./commands/thepurge.ts";
 import { kickUserHandler } from "./commands/kick.ts";
 import { CustomMessageContext } from "./types/messageDataTypes.ts";
+import { inactiveListHandler } from "./commands/inactive.ts";
 
 if (import.meta.main) {
   const botCreds = retrieveBotCredentials();
@@ -31,7 +32,8 @@ if (import.meta.main) {
     muteUserHandler,
     unmuteUserHandler,
     purgeInactiveUsersHandler,
-    kickUserHandler
+    kickUserHandler,
+    inactiveListHandler
   ];
   
   if (botCreds.apiId == null) throw "undefined bot api id";
