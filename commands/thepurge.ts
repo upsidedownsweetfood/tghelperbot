@@ -17,7 +17,7 @@ export async function execute_purge(
 
   const UserRepo = new UsersRepo(db);
 
-  const UsersDb = UserRepo.getUsers(chatId).map(e => e.UserId);
+  const UsersDb = UserRepo.getUsers().map(e => e.UserId);
   const InactiveUsers = (await bot.getChatMembers(chatId))
     .filter(m => !["creator", "administrator"].includes(m.status))
     .map(m => m.user.id)

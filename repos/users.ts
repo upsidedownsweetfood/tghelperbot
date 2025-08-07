@@ -1,6 +1,6 @@
 import { Database } from "@db/sqlite";
 import { User } from "../types/entities/user.ts";
-import { SqlGetUSersByChat } from "../constants.ts";
+import { SqlGetUsers } from "../constants.ts";
 
 export class UsersRepo {
   database: Database;
@@ -9,9 +9,9 @@ export class UsersRepo {
     this.database = db;
   }
 
-  public getUsers(chatId: number): User[] {
-    const statement = this.database.prepare(SqlGetUSersByChat)
-    return statement.all<User>(chatId);
+  public getUsers(): User[] {
+    const statement = this.database.prepare(SqlGetUsers)
+    return statement.all<User>();
   }
 
   public getUser(userId: number): User | undefined {
