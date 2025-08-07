@@ -16,7 +16,7 @@ export const SqlGetCommandQuery = "SELECT Id FROM Commands WHERE CommandName=?";
 export const SqlGetChatQuery = "SELECT * FROM Chats WHERE ChatId = ?";
 
 // USERS //
-export const SqlGetUSersByChat = "SELECT * FROM Users WHERE ChatId = ?";
+export const SqlGetUsers = "SELECT * FROM Users";
 
 // ROLES //
 export const SqlAddRoleQuery = "INSERT OR IGNORE INTO Roles (RoleName, ChatId) Values (?, ?)"
