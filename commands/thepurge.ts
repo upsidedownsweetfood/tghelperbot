@@ -21,7 +21,7 @@ export async function execute_purge(
   const InactiveUsers = (await bot.getChatMembers(chatId))
     .filter(m => !["creator", "administrator"].includes(m.status))
     .map(m => m.user.id)
-    .filter(m => UsersDb.includes(m));
+    .filter(m => !UsersDb.includes(m));
 
   for (const m of InactiveUsers)
   {
