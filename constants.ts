@@ -6,6 +6,7 @@ export const SqlBotAdminQuery = "SELECT * FROM Administrators WHERE UserId = ?";
 
 // Activity Logs //
 export const SqlAddActivityLog = "INSERT INTO ActivityLogs (UserId, ChatId, LogDate, LogType) Values (?, ?, DateTime('now'), ?)";
+export const SqlGetActivityLogByUserAndChat = "SELECT * FROM ActivityLogs WHERE UserId = ? AND ChatId = ?"
 
 // Commands //
 export const SqlAddCommandQuery = "INSERT OR IGNORE INTO Commands (CommandName, Enabled, AdministratorOnly) Values (?, 0, ?)";
@@ -13,6 +14,9 @@ export const SqlGetCommandQuery = "SELECT Id FROM Commands WHERE CommandName=?";
 
 // CHATS //
 export const SqlGetChatQuery = "SELECT * FROM Chats WHERE ChatId = ?";
+
+// USERS //
+export const SqlGetUSersByChat = "SELECT * FROM Users WHERE ChatId = ?";
 
 // ROLES //
 export const SqlAddRoleQuery = "INSERT OR IGNORE INTO Roles (RoleName, ChatId) Values (?, ?)"

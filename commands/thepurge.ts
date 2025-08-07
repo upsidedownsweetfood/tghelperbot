@@ -1,9 +1,9 @@
 import { CommandHandler } from "../types/misc.ts";
 import { Database } from "@db/sqlite";
 import { log, LogTypes } from "../helpers/log.ts";
-import { chatAdministratorRightsToTlObject, Client, Context } from "@mtkruto/mtkruto";
-import { typeByExtension } from "jsr:@std/media-types@1.1.0/type-by-extension";
+import { Client, Context } from "@mtkruto/mtkruto";
 import { CustomMessageContext } from "../types/messageDataTypes.ts";
+import { UsersRepo } from "../repos/users.ts";
 
 export async function execute_purge(
   bot: Client,
@@ -15,10 +15,18 @@ export async function execute_purge(
   if (!chatId)
     return;
 
-  for (const m of await bot.getChatMembers(chatId))
+  const UserRepo = new UsersRepo(db);
+
+  const UsersDb = UserRepo.getUsers(chatId).map(e => e.UserId);
+  const InactiveUsers = (await bot.getChatMembers(chatId))
+    .filter(m => !["creator", "administrator"].includes(m.status))
+    .map(m => m.user.id)
+    .filter(m => UsersDb.includes(m));
+
+  for (const m of InactiveUsers)
   {
-    if (!["creator", "administrator"].includes(m.status))
-    await ctx.kickChatMember(m.user.id)
+    log(LogTypes.INFO, "PURGE: kicked user: " + m);
+    //await ctx.kickChatMember(m)
   }
 }
 
@@ -26,6 +34,6 @@ export const purgeInactiveUsersHandler: CommandHandler<CustomMessageContext> = {
     name: "in_purge",
     description: "purge inactive users",
     callback: execute_purge,
-    botAdminOnly: false,
+    botAdminOnly: true,
     botNeedsAdmin: true
 }
